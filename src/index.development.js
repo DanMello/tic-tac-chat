@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './components/App'
+import Board from './components/Board'
 
 ReactDOM.render(
-  <App />,
+  <Board />,
   document.getElementById('root'));

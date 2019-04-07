@@ -1,5 +1,5 @@
-import App from './components/App'
+import Board from './components/Board'
 
 export {
-  App
+  Board
 }

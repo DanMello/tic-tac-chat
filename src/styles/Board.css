@@ -1,0 +1,18 @@
+.boardContainer * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.boardContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+}
+
+.boardRow {
+  display: flex;
+  height: 33.3%;
+}
