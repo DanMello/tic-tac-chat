@@ -2,6 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: sans-serif;
 }
 
 .boardContainer {
@@ -9,10 +10,25 @@
   flex-direction: column;
   height: 100%;
   width: 100%;
-  position: absolute;
 }
 
 .boardRow {
   display: flex;
   height: 33.3%;
+}
+
+.status {
+  font-size: 20px;
+  font-weight: bold;
+  padding-bottom: 10px;
+}
+
+.resetButton {
+  padding: 10px;
+  background: #3a3d50;
+  border-radius: 5px;
+  margin-top: 10px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
 }

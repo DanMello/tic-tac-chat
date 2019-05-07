@@ -5,6 +5,7 @@ exports[`Renders correctly 1`] = `
   className="boardContainer"
 >
   <div
+    className="status"
     id="status"
   >
     Next player: X
@@ -56,6 +57,13 @@ exports[`Renders correctly 1`] = `
       className="square"
       onClick={[Function]}
     />
+  </div>
+  <div
+    className="resetButton"
+    id="resetButton"
+    onClick={[Function]}
+  >
+    Reset
   </div>
 </div>
 `;

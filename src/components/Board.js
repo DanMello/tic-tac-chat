@@ -58,6 +58,11 @@ function Board() {
     );
   };
 
+  function resetSquares() {
+    setSquares(Array(9).fill(null));
+    setXNext(true);
+  };
+
   if (winner) {
     status = 'Winner: ' + winner;
   } else if (!winner && squares.every(item => item !== null)) {
@@ -68,7 +73,7 @@ function Board() {
 
   return (
     <div className={styles.boardContainer}>
-      <div id='status'>{status}</div>
+      <div id='status' className={styles.status}>{status}</div>
       {chunkedArray.map((array, i) => {
         return (
           <div key={i} className={styles.boardRow}>
@@ -79,6 +84,7 @@ function Board() {
           </div>
         );
       })}
+      <div id='resetButton' className={styles.resetButton} onClick={resetSquares}>Reset</div>
     </div>
   );
 };

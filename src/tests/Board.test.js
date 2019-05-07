@@ -31,7 +31,7 @@ it('should render 5 divs', () => {
     ReactDOM.render(<Board />, container);
   });
   const divs = container.querySelectorAll('div');
-  expect(divs.length).toEqual(5);
+  expect(divs.length).toEqual(6);
 });
 
 it('Each row should have 3 columns.', () => {
@@ -76,7 +76,7 @@ it('Should still only render 5 divs if all columns are selected and game was a t
     });
   });
   const divs = container.querySelectorAll('div');
-  expect(divs.length).toEqual(5);
+  expect(divs.length).toEqual(6);
 });
 
 it('Clicking should only change the column that was clicked, dont change the numbers on chunkIndex Variable.', () => {
@@ -122,4 +122,20 @@ it('If game was a tie status should be Game was a tie.', () => {
     });
   });
   expect(status.innerHTML).toBe('Game was a tie');
+});
+
+it('When you click reset button, the board resets', () => {
+  act(() => {
+    ReactDOM.render(<Board />, container);
+  });
+  const squares = container.querySelectorAll('button');
+  const resetButton = container.querySelector('#resetButton');
+  const status = container.querySelector('#status');
+  act(() => {
+    resetButton.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+  });
+  squares.forEach((_, index) => {
+    expect(squares[index].textContent).toBe('');
+  });
+  expect(status.innerHTML).toBe('Next player: X');
 });

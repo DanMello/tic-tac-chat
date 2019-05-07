@@ -3,5 +3,7 @@ import ReactDOM from 'react-dom';
 import Board from './components/Board'
 
 ReactDOM.render(
-  <Board />,
+  <div style={{width: '400px', height: '400px'}}>
+    <Board />
+  </div>,
   document.getElementById('root'));
