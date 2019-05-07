@@ -4,7 +4,9 @@ exports[`Renders correctly 1`] = `
 <div
   className="boardContainer"
 >
-  <div>
+  <div
+    id="status"
+  >
     Next player: X
   </div>
   <div

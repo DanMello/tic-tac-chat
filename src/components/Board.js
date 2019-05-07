@@ -34,6 +34,9 @@ function chunk_array(array, chunks) {
 function Board() {
   const [ squares, setSquares ] = useState(Array(9).fill(null));
   const [ isXNext, setXNext ] = useState(true);
+  const winner = calculateWinner(squares);
+  const chunkedArray = chunk_array(squares, 3);
+  let status;
 
   function handleClick(i) {
     const nextSquares = squares.slice();
@@ -55,19 +58,17 @@ function Board() {
     );
   };
 
-  const winner = calculateWinner(squares);
-  let status;
   if (winner) {
     status = 'Winner: ' + winner;
+  } else if (!winner && squares.every(item => item !== null)) {
+    status = 'Game was a tie'
   } else {
     status = 'Next player: ' + (isXNext ? 'X' : 'O');
   };
 
-  const chunkedArray = chunk_array(squares, 3);
-
   return (
     <div className={styles.boardContainer}>
-      <div>{status}</div>
+      <div id='status'>{status}</div>
       {chunkedArray.map((array, i) => {
         return (
           <div key={i} className={styles.boardRow}>
