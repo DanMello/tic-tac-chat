@@ -24,9 +24,8 @@ function calculateWinner(squares) {
 
 function chunk_array(array, chunks) {
 
-  const newArray = array.slice();
-  const chunk_array = newArray
-    .map((e,i) => (i % chunks == 0) && newArray.slice(i,i+chunks))
+  const chunk_array = array
+    .map((_,i) => (i % chunks == 0) && array.slice(i,i+chunks))
     .filter(e => e);
 
   return chunk_array;
@@ -72,7 +71,7 @@ function Board() {
       {chunkedArray.map((array, i) => {
         return (
           <div key={i} className={styles.boardRow}>
-            {array.map((square, index) => {
+            {array.map((_, index) => {
               const chunkIndex = i > 0 ? ((i * 3) + index) : index;
               return renderSquare(chunkIndex);
             })}

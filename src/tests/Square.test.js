@@ -1,7 +1,20 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
+import { act } from 'react-dom/test-utils';
 import Square from '../components/Square';
-import { shallow } from 'enzyme';
 import renderer from 'react-test-renderer';
+
+let container;
+
+beforeEach(() => {
+  container = document.createElement('div');
+  document.body.appendChild(container);
+});
+
+afterEach(() => {
+  document.body.removeChild(container);
+  container = null;
+});
 
 it('Renders correctly', () => {
   const tree = renderer
@@ -11,11 +24,10 @@ it('Renders correctly', () => {
 });
 
 describe('Square', () => {
-  let wrapper;
-  beforeEach(() => wrapper = shallow(<Square value={''} onClick={jest.fn()} />));
-
-  it('renders the value', () => {
-    wrapper.setProps({value: 'X'});
-    expect(wrapper.find('.square').text()).toEqual('X');
+  it('renders the props passed', () => {
+    act(() => {
+      ReactDOM.render(<Square value='X'/>, container);
+    });
+    expect(container.textContent).toEqual('X');
   });
 });
