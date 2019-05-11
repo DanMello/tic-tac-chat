@@ -4,6 +4,7 @@ import { act } from 'react-dom/test-utils';
 import Board from '../components/Board';
 import renderer from 'react-test-renderer';
 import styles from 'styles/Board.css';
+import squareStyles from 'styles/Square.css';
 
 let container;
 
@@ -26,12 +27,12 @@ it('Renders correctly', () => {
   expect(tree).toMatchSnapshot();
 });
 
-it('should render 5 divs', () => {
+it('should render 7 divs', () => {
   act(() => {
     ReactDOM.render(<Board />, container);
   });
   const divs = container.querySelectorAll('div');
-  expect(divs.length).toEqual(6);
+  expect(divs.length).toEqual(7);
 });
 
 it('Each row should have 3 columns.', () => {
@@ -64,7 +65,7 @@ it('Board updates with X and O when user clicks on it and renders proper status.
   expect(squares[1].textContent).toBe('O');
 });
 
-it('Should still only render 5 divs if all columns are selected and game was a tie.', () => {
+it('Should still only render 7 divs if all squares are selected and the game was a tie.', () => {
   act(() => {
     ReactDOM.render(<Board />, container);
   });
@@ -76,14 +77,14 @@ it('Should still only render 5 divs if all columns are selected and game was a t
     });
   });
   const divs = container.querySelectorAll('div');
-  expect(divs.length).toEqual(6);
+  expect(divs.length).toEqual(7);
 });
 
 it('Clicking should only change the column that was clicked, dont change the numbers on chunkIndex Variable.', () => {
   act(() => {
     ReactDOM.render(<Board />, container);
   });
-  const squares = container.querySelectorAll('button');
+  const squares = container.querySelectorAll('.' + squareStyles.square);
   act(() => {
     squares[2].dispatchEvent(new MouseEvent('click', {bubbles: true}));
   });
@@ -128,7 +129,7 @@ it('When you click reset button, the board resets', () => {
   act(() => {
     ReactDOM.render(<Board />, container);
   });
-  const squares = container.querySelectorAll('button');
+  const squares = container.querySelectorAll('.' + squareStyles.square);
   const resetButton = container.querySelector('#resetButton');
   const status = container.querySelector('#status');
   act(() => {

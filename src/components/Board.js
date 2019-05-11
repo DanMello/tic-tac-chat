@@ -1,51 +1,25 @@
-import React, { useState } from 'react';
+import React, { useReducer } from 'react';
 import Square from './Square';
 import styles from 'styles/Board.css';
-
-function calculateWinner(squares) {
-  const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-  for (let i = 0; i < lines.length; i++) {
-    const [a, b, c] = lines[i];
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
-    }
-  }
-  return null;
-}
-
-function chunk_array(array, chunks) {
-
-  const chunk_array = array
-    .map((_,i) => (i % chunks == 0) && array.slice(i,i+chunks))
-    .filter(e => e);
-
-  return chunk_array;
-};
+import calculateWinner from '../helpers/calculateWinner';
+import chunkArray from '../helpers/chunkArray';
+import gameReducer from '../reducer/gameReducer';
+import MoveList from './MoveList';
+import useTimeMachine from '../hooks/timeMachine';
 
 function Board() {
-  const [ squares, setSquares ] = useState(Array(9).fill(null));
-  const [ isXNext, setXNext ] = useState(true);
+  const [state, dispatch] = useReducer(gameReducer, {
+    squares: Array(9).fill(null),
+    isXNext: true
+  });
+  const {history, jumpToSquares, resetHistory} = useTimeMachine(state.squares, dispatch);
+  const {squares, isXNext} = state;
   const winner = calculateWinner(squares);
-  const chunkedArray = chunk_array(squares, 3);
+  const chunkedArray = chunkArray(squares, 3);
   let status;
 
   function handleClick(i) {
-    const nextSquares = squares.slice();
-    if (calculateWinner(squares) || squares[i]) {
-      return;
-    }
-    nextSquares[i] = isXNext ? 'X' : 'O';
-    setXNext(!isXNext);
-    setSquares(nextSquares);
+    dispatch({type: 'SELECT_SQUARE', index: i});
   };
 
   function renderSquare(i) {
@@ -59,8 +33,8 @@ function Board() {
   };
 
   function resetSquares() {
-    setSquares(Array(9).fill(null));
-    setXNext(true);
+    dispatch({type: 'RESET_SQUARE'});
+    resetHistory();
   };
 
   if (winner) {
@@ -85,6 +59,7 @@ function Board() {
         );
       })}
       <div id='resetButton' className={styles.resetButton} onClick={resetSquares}>Reset</div>
+      <MoveList history={history} jumpToSquares={jumpToSquares}/>
     </div>
   );
 };

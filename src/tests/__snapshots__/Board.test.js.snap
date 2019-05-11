@@ -65,5 +65,14 @@ exports[`Renders correctly 1`] = `
   >
     Reset
   </div>
+  <div>
+    <li>
+      <button
+        onClick={[Function]}
+      >
+        Go to game start
+      </button>
+    </li>
+  </div>
 </div>
 `;
