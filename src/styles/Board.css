@@ -8,13 +8,12 @@
 .boardContainer {
   display: flex;
   flex-direction: column;
-  height: 100%;
   width: 100%;
 }
 
 .boardRow {
   display: flex;
-  height: 33.3%;
+  height: 100px;
 }
 
 .status {

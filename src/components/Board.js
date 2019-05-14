@@ -1,25 +1,73 @@
-import React, { useReducer } from 'react';
+import React from 'react';
 import Square from './Square';
 import styles from 'styles/Board.css';
 import calculateWinner from '../helpers/calculateWinner';
 import chunkArray from '../helpers/chunkArray';
-import gameReducer from '../reducer/gameReducer';
-import MoveList from './MoveList';
-import useTimeMachine from '../hooks/timeMachine';
 
-function Board() {
-  const [state, dispatch] = useReducer(gameReducer, {
-    squares: Array(9).fill(null),
-    isXNext: true
-  });
-  const {history, jumpToSquares, resetHistory} = useTimeMachine(state.squares, dispatch);
-  const {squares, isXNext} = state;
-  const winner = calculateWinner(squares);
-  const chunkedArray = chunkArray(squares, 3);
+function isPlayerNext(state) {
+  const {isXNext,allPlayers} = state;
+  const nextMove = (isXNext ? 'X' : 'O');
+  const nextPlayer = allPlayers
+    .filter(user => user.player === nextMove)
+    .reduce((acc, current) => ({...acc, ...current}), {});
+
+  return nextPlayer.name;
+};
+
+function gameStatus(state) {
+  let {squares, isXNext, otherUser, allPlayers, multiplayer, gameFull} = state;
+  let winner = calculateWinner(squares);
+  let nextMove = (isXNext ? 'X' : 'O');
   let status;
 
+  if (winner) {
+    if (multiplayer) {
+      const playerThatWon = allPlayers
+        .filter(user => user.player === winner)
+        .reduce((acc, current) => ({...acc, ...current}), {});
+
+      status = playerThatWon.name + ' is the winner!';
+    } else {
+      status = 'Winner: ' + winner;
+    };
+  } else if (!winner && squares.every(item => item !== null)) {
+    status = 'Game was a tie';
+  } else if (multiplayer && !gameFull) {
+    status = 'Waiting for second player to join.'
+  } else if (multiplayer && gameFull) {
+    status = 'Next player: ' + isPlayerNext(state);
+  } else {
+    status = 'Next player: ' + nextMove;
+  };
+  return status;
+};
+
+function Board({state, dispatch}) {
+  const { squares, socket, gameFull, multiplayer, name } = state;
+  const status = gameStatus(state);
+  const chunkedArray = chunkArray(squares, 3);
+
   function handleClick(i) {
-    dispatch({type: 'SELECT_SQUARE', index: i});
+    if (calculateWinner(squares) || squares[i]) {
+      return;
+    };
+    if (multiplayer) {
+      if (!gameFull) {
+        return;
+      }
+      if (name !== isPlayerNext(state)) {
+        alert('its not your turn');
+        return;
+      }
+      const msg = {
+        type: "updateSquares",
+        index: i,
+        room: state.roomId
+      };
+      socket.send(JSON.stringify(msg));
+    } else {
+      dispatch({type: 'SELECT_SQUARE', index: i});
+    };
   };
 
   function renderSquare(i) {
@@ -30,19 +78,6 @@ function Board() {
         onClick={() => handleClick(i)}
       />
     );
-  };
-
-  function resetSquares() {
-    dispatch({type: 'RESET_SQUARE'});
-    resetHistory();
-  };
-
-  if (winner) {
-    status = 'Winner: ' + winner;
-  } else if (!winner && squares.every(item => item !== null)) {
-    status = 'Game was a tie'
-  } else {
-    status = 'Next player: ' + (isXNext ? 'X' : 'O');
   };
 
   return (
@@ -58,8 +93,6 @@ function Board() {
           </div>
         );
       })}
-      <div id='resetButton' className={styles.resetButton} onClick={resetSquares}>Reset</div>
-      <MoveList history={history} jumpToSquares={jumpToSquares}/>
     </div>
   );
 };

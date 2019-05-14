@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Board from './components/Board'
+import Game from './components/Game';
 
 ReactDOM.render(
-  <div style={{width: '400px', height: '400px'}}>
-    <Board />
+  <div style={{width: '100%'}}>
+    <Game />
   </div>,
   document.getElementById('root'));

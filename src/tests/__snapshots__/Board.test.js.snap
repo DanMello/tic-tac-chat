@@ -8,7 +8,7 @@ exports[`Renders correctly 1`] = `
     className="status"
     id="status"
   >
-    Next player: X
+    Next player: O
   </div>
   <div
     className="boardRow"
@@ -57,22 +57,6 @@ exports[`Renders correctly 1`] = `
       className="square"
       onClick={[Function]}
     />
-  </div>
-  <div
-    className="resetButton"
-    id="resetButton"
-    onClick={[Function]}
-  >
-    Reset
-  </div>
-  <div>
-    <li>
-      <button
-        onClick={[Function]}
-      >
-        Go to game start
-      </button>
-    </li>
   </div>
 </div>
 `;

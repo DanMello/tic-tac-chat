@@ -1,0 +1,14 @@
+.Container {
+ display: flex;
+ align-items: center;
+ font-family: sans-serif;
+ border-radius: 5px;
+ flex-direction: column;
+ padding-left: 15px;
+ padding-right: 15px;
+}
+
+.heading {
+  /* font-family: cursive; */
+  /* font-style: italic; */
+}
