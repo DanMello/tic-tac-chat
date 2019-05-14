@@ -1,5 +1,3 @@
-import Board from './components/Board'
+import Game from './components/Game';
 
-export {
-  Board
-}
+export { Game };

@@ -1,7 +1,7 @@
 {
-  "name": "startup-react-app",
+  "name": "tic-tac-chat",
   "version": "1.0.0",
-  "description": "A react package for creating and testing new parts of your web app in complete isolation.",
+  "description": "A tic tac toe game that lets you play locally with your friends or online with players and chat with them while you play.",
   "main": "dist/main.bundle.js",
   "peerDependencies": {
     "react": "^16.5.2",

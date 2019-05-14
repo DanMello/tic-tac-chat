@@ -1,4 +1,4 @@
-import React, { useState, useReducer } from 'react'
+import React, { useState } from 'react'
 import SelectMode from './SelectMode';
 import Offline from './Offline';
 import Create from './Create';
@@ -8,8 +8,8 @@ import useGameReducer from '../hooks/gameReducer';
 import useTimeMachine from '../hooks/timeMachine';
 import Styles from '../styles/Game.css';
 
-export default function Game () {
-  const {socket} = useWebSocket(null);
+export default function Game (config) {
+  const {socket} = useWebSocket(config);
   const [state, dispatch] = useGameReducer(socket);
   const {history, jumpToSquares, resetHistory} = useTimeMachine(state.squares, dispatch);
   const [mode, setMode] = useState('create');
