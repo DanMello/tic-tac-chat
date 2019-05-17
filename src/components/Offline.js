@@ -13,8 +13,10 @@ export default function Offline ({ state, dispatch, resetBoard, history, jumpToS
   return (
     <div className={styles.container}>
       <Board state={state} dispatch={dispatch} />
-      <Reset resetBoard={resetBoard} />
-      <MoveList history={history} jumpToSquares={jumpToSquares} />
+      <div className={styles.buttons}>
+        <Reset resetBoard={resetBoard} />
+        <MoveList history={history} jumpToSquares={jumpToSquares} />
+      </div>
     </div>
   );
 };

@@ -1,32 +1,24 @@
-.boardContainer * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: sans-serif;
-}
-
 .boardContainer {
   display: flex;
   flex-direction: column;
-  width: 100%;
 }
 
 .boardRow {
   display: flex;
-  height: 100px;
+  height: 80px;
+  padding: 0px;
+  margin: 0px;
 }
 
 .status {
-  font-size: 20px;
-  font-weight: bold;
-  padding-bottom: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 .resetButton {
   padding: 10px;
-  background: #3a3d50;
+  background: #03a9f4;
   border-radius: 5px;
-  margin-top: 10px;
   color: white;
   font-weight: bold;
   cursor: pointer;

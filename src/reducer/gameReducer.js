@@ -4,14 +4,20 @@ export default function gameReducer(state, action) {
   const {
     squares,
     isXNext,
-    player,
-    roomId,
-    name,
+    move,
+    gameId,
+    roomName,
+    username,
     otherUser,
     allPlayers,
     multiplayer,
     gameFull,
-    socket 
+    socket,
+    clientID,
+    chat,
+    gameOver,
+    response,
+    rematch
   } = state;
 
   switch (action.type) {
@@ -41,30 +47,38 @@ export default function gameReducer(state, action) {
     case 'createGame': {
       return {
         ...state,
-        roomId: action.data.room,
-        player: action.data.player,
-        name: action.data.name,
+        gameId: action.data.gameId,
+        roomName: action.data.roomName,
+        move: action.data.move,
+        username: action.data.username,
+        clientID: action.data.clientID,
         multiplayer: true
       };
     }
     case 'joinGame': {
       return {
         ...state,
-        roomId: action.data.room,
-        player: action.data.player,
-        name: action.data.name,
+        gameId: action.data.gameId,
+        move: action.data.move,
+        roomName: action.data.roomName,
+        username: action.data.username,
+        clientID: action.data.clientID,
         multiplayer: true
       };
     }
     case 'notifyAllUsers': {
-      const you = {name: name, player: player, room: roomId};
-      const otherUser = action.data.users.filter(user => user.player !== player);
+      const you = {username: username, move: move, clientID: clientID};
+      const otherUser = action.data.users.filter(user => user.move !== move);
       const players = [you].concat(otherUser[0]);
 
       return {
         ...state,
         otherUser: otherUser,
         allPlayers: players,
+        response: {
+          type: 'userJoined',
+          userThatJoined: action.data.userThatJoined
+        },
         gameFull: true
       };
     }
@@ -77,11 +91,108 @@ export default function gameReducer(state, action) {
         isXNext: !isXNext
       };
     }
+    case "messageDelivered": {
+      return {
+        ...state,
+        delivered: true
+      };
+    }
+    case "newMessages" : {
+      const newMessages = chat.concat({
+        message: action.data.message,
+        clientID: action.data.clientID,
+        username: action.data.username
+      })
+      return {
+        ...state,
+        chat: newMessages,
+        response: {
+          type: 'latestMessage',
+          username: action.data.username,
+          message: action.data.message
+        }
+      }
+    }
     case "UPDATE_SOCKET": {
       return {
         ...state,
         socket: action.socket
       };
+    }
+    case "UPDATE_USERNAME": {
+      return {
+        ...state,
+        username: action.username
+      };
+    }
+    case "leaveGame": {
+      return {
+        ...state,
+        squares: Array(9).fill(null),
+        isXNext: true,
+        move: null,
+        gameId: null,
+        roomName: null,
+        allPlayers: [],
+        otherUser: [],
+        multiplayer: false,
+        gameFull: false,
+        chat: []
+      };
+    }
+    case "notifyUserLeft": {
+      return {
+        ...state,
+        squares: Array(9).fill(null),
+        isXNext: true,
+        allPlayers: [],
+        otherUser: [],
+        gameFull: false,
+        chat: [],
+        response: {
+          type: 'userLeft',
+          username: action.data.username
+        }
+      }
+    }
+    case "GAME_OVER": {
+      return {
+        ...state,
+        gameOver: true
+      };
+    }
+    case "CLEAR_RESPONSE": {
+      return {
+        ...state,
+        response: {}
+      }
+    }
+    case "removeRematchButton": {
+      return {
+        ...state,
+        rematch: true
+      }
+    }
+    case "rematch": {
+      return {
+        ...state,
+        response: {
+          type: 'rematch',
+          username: action.data.username
+        }
+      }
+    }
+    case "rematchStart" : {
+      return {
+        ...state,
+        response: {
+          type: 'rematchStarted'
+        },
+        rematch: false,
+        squares: Array(9).fill(null),
+        isXNext: true,
+        gameOver: false
+      }
     }
   };
 };

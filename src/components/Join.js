@@ -1,57 +1,86 @@
-import React, { useState } from 'react';
-import Board from './Board';
-import styles from 'styles/Create.css';
+import React, { useState, useEffect } from 'react';
+import OnlineBoard from './OnlineBoard';
+import styles from 'styles/Join.css';
 
-export default function Join ({state, dispatch}) {
+export default function Join ({state, dispatch, config}) {
   
-  const [name, setName] = useState('');
-  const [id, setId] = useState('');
-  const [error, setError] = useState(null);
+  const [games, setGames] = useState([]);
 
-  function joinGame() {
-    if (name === '') {
-      setError('Please enter your name.');
-      return;
+  useEffect(() => {
+    let url;
+    if (config.config.environment === 'development') {
+      url = 'http://localhost:3004/availablegames';
+    } else {
+      url = 'https://game.mellocloud.com/availablegames';
     };
-    if (id === '') {
-      setError('Please enter room ID.');
+    fetch(url)
+    .then(games => {
+      return games.json()
+    })
+    .then(games => {
+      console.log(games)
+      setGames(games)
+    })
+  }, [])
+
+  function joinGame(gameId, playersLength) {
+    if (playersLength > 1) {
       return;
     };
     const msg = {
       type: "joinGame",
-      room: id,
-      name: name
+      username: state.username,
+      gameId: gameId
     };
     state.socket.send(JSON.stringify(msg))
-  };
-
-  function changeName(e) {
-    setError('');
-    setName(e.target.value);
-  };
-
-  function changeId(e) {
-    setError('');
-    setId(e.target.value);
   };
 
   return (
     <div className={styles.container}>
       {state.multiplayer === true ?
-        <div>
-          <h1>Room ID: {state.roomId}</h1>
-          <Board state={state} dispatch={dispatch} />
-        </div>
+        <OnlineBoard state={state} dispatch={dispatch} />
         :
         <div>
-          {error}
-          <label>Enter your name: </label>
-          <input value={name} onChange={changeName} />
-          <label>Enter room ID: </label>
-          <input value={id} onChange={changeId} />
-          <button onClick={joinGame}>
-            Join game
-          </button>
+          {games.length > 0 ?
+            games.map(games => {
+              return (
+                <div key={games._id} className={styles.box}>
+                  <div className={styles.roomName}>{games.roomName}</div>
+                  <div className={styles.id}>
+                    Game ID: {games._id}
+                    </div>
+                  <div className={styles.line}/>
+                  {games.players.map(player => {
+                    return (
+                      <div key={player.move}>
+                        <div className={styles.li}>
+                          Player:
+                          <div className={styles.value}>
+                            {player.move}
+                          </div>
+                        </div>
+                        <div className={styles.li}>
+                          name:
+                          <div className={styles.value}>
+                          {player.username}
+                          </div>
+                        </div>
+                        <div className={styles.line}/>
+                      </div>
+                    );
+                  })}
+                  <div 
+                    className={games.players.length > 1 ? [styles.button, styles.disabled].join(' ') : styles.button}
+                    onClick={() => joinGame(games._id, games.players.length)}
+                    >
+                    {games.players.length > 1 ? 'Game full' : 'Join game'}
+                  </div>
+                </div>
+              );
+            })
+            :
+            <div className={styles.noGames}>No games available to join</div>
+          }
         </div>
       }
     </div>

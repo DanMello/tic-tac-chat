@@ -1,3 +1,12 @@
 .container {
   width: 100%;
+  background: white;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.buttons {
+  display: flex;
+  margin-top: 10px;
+  align-items: center;
 }

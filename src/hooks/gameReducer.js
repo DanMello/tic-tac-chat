@@ -5,15 +5,22 @@ export default function useGameReducer (socket) {
   const [state, dispatch] = useReducer(gameReducer, {
     squares: Array(9).fill(null),
     isXNext: true,
-    player: null,
-    roomId: null,
-    name: null,
+    move: null,
+    gameId: null,
+    roomName: null,
+    username: '',
     allPlayers: [],
     otherUser: [],
     multiplayer: false,
     gameFull: false,
-    socket: socket
+    socket: socket,
+    clientID: null,
+    chat: [],
+    gameOver: false,
+    response: {},
+    rematch: false
   });
+
   useEffect(() => {
     function createSocketEvents(event) {
       const data = JSON.parse(event.data);
@@ -26,10 +33,29 @@ export default function useGameReducer (socket) {
       socket.addEventListener('message', createSocketEvents);
       dispatch({type: 'UPDATE_SOCKET', socket: socket});
       return () => {
-        socket.removeEventListener('message', createMultiplayerEvents);
+        socket.removeEventListener('message', createSocketEvents);
       };
     };
   }, [socket]);
+
+  useEffect(() => {
+    function randomUsername() {
+      var S4 = function() {
+         return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+      };
+      return ('user' + S4()+S4());
+    };
+    const username = localStorage.getItem('username');
+    if (username === null) {
+      dispatch({type: 'UPDATE_USERNAME', username: randomUsername()});
+    } else {
+      dispatch({type: 'UPDATE_USERNAME', username: username});
+    };
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('username', state.username);
+  }, [state.username]);
 
   return [state, dispatch];
 };

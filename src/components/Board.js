@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{ useEffect }from 'react';
 import Square from './Square';
 import styles from 'styles/Board.css';
 import calculateWinner from '../helpers/calculateWinner';
@@ -8,44 +8,57 @@ function isPlayerNext(state) {
   const {isXNext,allPlayers} = state;
   const nextMove = (isXNext ? 'X' : 'O');
   const nextPlayer = allPlayers
-    .filter(user => user.player === nextMove)
+    .filter(user => user.move === nextMove)
     .reduce((acc, current) => ({...acc, ...current}), {});
 
-  return nextPlayer.name;
+  return nextPlayer;
 };
 
 function gameStatus(state) {
-  let {squares, isXNext, otherUser, allPlayers, multiplayer, gameFull} = state;
+  let {squares, isXNext, allPlayers, multiplayer, gameFull} = state;
   let winner = calculateWinner(squares);
   let nextMove = (isXNext ? 'X' : 'O');
   let status;
+  let gameOver;
 
   if (winner) {
     if (multiplayer) {
       const playerThatWon = allPlayers
-        .filter(user => user.player === winner)
+        .filter(user => user.move === winner)
         .reduce((acc, current) => ({...acc, ...current}), {});
 
-      status = playerThatWon.name + ' is the winner!';
+      status = playerThatWon.username + ' is the winner!';
     } else {
       status = 'Winner: ' + winner;
     };
+    gameOver = true;
   } else if (!winner && squares.every(item => item !== null)) {
     status = 'Game was a tie';
+    gameOver = true;
   } else if (multiplayer && !gameFull) {
     status = 'Waiting for second player to join.'
   } else if (multiplayer && gameFull) {
-    status = 'Next player: ' + isPlayerNext(state);
+    const nextPlayer = isPlayerNext(state);
+    status = 'Next player: ' + nextPlayer.username;
   } else {
     status = 'Next player: ' + nextMove;
   };
-  return status;
+  return {
+    status,
+    gameOver
+  };
 };
 
 function Board({state, dispatch}) {
-  const { squares, socket, gameFull, multiplayer, name } = state;
+  const { squares, socket, gameFull, multiplayer, clientID } = state;
   const status = gameStatus(state);
   const chunkedArray = chunkArray(squares, 3);
+
+  useEffect(() => {
+    if (status.gameOver === true) {
+      dispatch({type: 'GAME_OVER'})
+    };
+  }, [status.gameOver])
 
   function handleClick(i) {
     if (calculateWinner(squares) || squares[i]) {
@@ -55,14 +68,15 @@ function Board({state, dispatch}) {
       if (!gameFull) {
         return;
       }
-      if (name !== isPlayerNext(state)) {
+      const nextPlayer = isPlayerNext(state);
+      if (clientID !== nextPlayer.clientID) {
         alert('its not your turn');
         return;
       }
       const msg = {
         type: "updateSquares",
         index: i,
-        room: state.roomId
+        gameId: state.gameId
       };
       socket.send(JSON.stringify(msg));
     } else {
@@ -82,7 +96,7 @@ function Board({state, dispatch}) {
 
   return (
     <div className={styles.boardContainer}>
-      <div id='status' className={styles.status}>{status}</div>
+      <div id='status' className={styles.status}>{status.status}</div>
       {chunkedArray.map((array, i) => {
         return (
           <div key={i} className={styles.boardRow}>
