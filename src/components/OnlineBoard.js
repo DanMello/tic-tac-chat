@@ -89,6 +89,9 @@ export default function OnlineBoard({state, dispatch}) {
         <div className={Styles.popUpMessage}>{response.message.substring(0, 30) + '...'}</div>
       </div>
       break;
+    case 'playerDisconnect': 
+    responseComponent = <div className={Styles.popUpOne}>{response.playerName} has been disconnected.</div>
+      break;
   };
 
   return (  

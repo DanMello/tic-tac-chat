@@ -1,5 +1,3 @@
-import calculateWinner from '../helpers/calculateWinner';
-
 export default function gameReducer(state, action) {
   const {
     squares,
@@ -17,7 +15,9 @@ export default function gameReducer(state, action) {
     chat,
     gameOver,
     response,
-    rematch
+    rematch,
+    error,
+    gamesChanged
   } = state;
 
   switch (action.type) {
@@ -133,6 +133,8 @@ export default function gameReducer(state, action) {
         move: null,
         gameId: null,
         roomName: null,
+        rematch: false,
+        gameOver: false,
         allPlayers: [],
         otherUser: [],
         multiplayer: false,
@@ -145,6 +147,8 @@ export default function gameReducer(state, action) {
         ...state,
         squares: Array(9).fill(null),
         isXNext: true,
+        rematch: false,
+        gameOver: false,
         allPlayers: [],
         otherUser: [],
         gameFull: false,
@@ -190,8 +194,65 @@ export default function gameReducer(state, action) {
         },
         rematch: false,
         squares: Array(9).fill(null),
-        isXNext: true,
+        isXNext: false,
         gameOver: false
+      }
+    }
+    case "error" : {
+      return {
+        ...state,
+        error: action.data.message
+      }
+    }
+    case "playerDisconnect" : {
+      return {
+        ...state,
+        gameFull: false,
+        allPlayers: [],
+        otherUser: [],
+        response: {
+          type: 'playerDisconnect',
+          playerName: action.data.player.username
+        },
+        rematch: false,
+        squares: Array(9).fill(null),
+        isXNext: true,
+        gameOver: false,
+        chat: [],
+      }
+    }
+    case "gamesChanged" : {
+      return {
+        ...state,
+        gamesChanged: !gamesChanged
+      };
+    }
+    case "ERROR" : {
+      return {
+        ...state,
+        error: action.message
+      }
+    }
+    case "RESET_STATE" : {
+      return {
+        ...state,
+        squares: Array(9).fill(null),
+        isXNext: true,
+        move: null,
+        gameId: null,
+        roomName: null,
+        allPlayers: [],
+        otherUser: [],
+        multiplayer: false,
+        gameFull: false,
+        socket: socket,
+        clientID: null,
+        chat: [],
+        gameOver: false,
+        response: {},
+        rematch: false,
+        error: false,
+        gamesChanged: !gamesChanged
       }
     }
   };

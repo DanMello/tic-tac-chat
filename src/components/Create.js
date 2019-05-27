@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import OnlineBoard from './OnlineBoard';
 import styles from 'styles/Create.css';
 
-export default function Create ({state, dispatch}) {
+export default function Create ({state, dispatch, userNameError}) {
 
   const [name, setName] = useState('');
   const [move, setMove] = useState('');
@@ -10,6 +10,9 @@ export default function Create ({state, dispatch}) {
   const [moveError, setMoveError] = useState(null);
 
   function createGame() {
+    if (userNameError) {
+      return;
+    };
     if (name === '') {
       setError('Please enter a room name.');
       return;

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 export default function useWebSocket({config}) {
 
   const [socket, setSocket] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     let url;
@@ -13,14 +14,18 @@ export default function useWebSocket({config}) {
     } else {
       url = 'wss://mellocloud.com/ws';
     };
-    console.log(url)
     const s = new WebSocket(url);
     function open () {
       setSocket(s);
     };
+    function error() {
+      setError('Failed to connect to server please refresh page.')
+    };
     s.addEventListener('open', open);
+    s.addEventListener('error', error);
   }, [])
   return {
-    socket
+    socket,
+    error
   };
 }

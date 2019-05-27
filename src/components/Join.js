@@ -2,28 +2,37 @@ import React, { useState, useEffect } from 'react';
 import OnlineBoard from './OnlineBoard';
 import styles from 'styles/Join.css';
 
-export default function Join ({state, dispatch, config}) {
+export default function Join ({state, dispatch, config, userNameError}) {
   
   const [games, setGames] = useState([]);
+  let url;
 
-  useEffect(() => {
-    let url;
-    if (config.config.environment === 'development') {
-      url = 'http://localhost:3004/availablegames';
-    } else {
-      url = 'https://game.mellocloud.com/availablegames';
-    };
+  if (config.config.environment === 'development') {
+    url = 'http://localhost:3004/availablegames';
+  } else {
+    url = 'https://game.mellocloud.com/availablegames';
+  };
+
+  function findGames(url) {
     fetch(url)
     .then(games => {
       return games.json()
     })
     .then(games => {
-      console.log(games)
       setGames(games)
+    }).catch(() => {
+      setGames([])
     })
-  }, [])
+  };
+
+  useEffect(() => {
+    findGames(url)
+  }, [state.gamesChanged])
 
   function joinGame(gameId, playersLength) {
+    if (userNameError) {
+      return;
+    };
     if (playersLength > 1) {
       return;
     };

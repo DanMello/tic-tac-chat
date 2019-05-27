@@ -18,7 +18,9 @@ export default function useGameReducer (socket) {
     chat: [],
     gameOver: false,
     response: {},
-    rematch: false
+    rematch: false,
+    error: false,
+    gamesChanged: false
   });
 
   useEffect(() => {
@@ -29,11 +31,17 @@ export default function useGameReducer (socket) {
         data: data
       });
     };
+    function closeSocket() {
+      dispatch({type: 'RESET_STATE'})
+      dispatch({type: 'ERROR', message: 'Lost connection to server please refresh page.'})
+    };
     if (socket !== null) {
       socket.addEventListener('message', createSocketEvents);
+      socket.addEventListener('close', closeSocket);
       dispatch({type: 'UPDATE_SOCKET', socket: socket});
       return () => {
         socket.removeEventListener('message', createSocketEvents);
+        socket.removeEventListener('close', closeSocket);
       };
     };
   }, [socket]);
@@ -46,7 +54,7 @@ export default function useGameReducer (socket) {
       return ('user' + S4()+S4());
     };
     const username = localStorage.getItem('username');
-    if (username === null) {
+    if (username === null || username === '') {
       dispatch({type: 'UPDATE_USERNAME', username: randomUsername()});
     } else {
       dispatch({type: 'UPDATE_USERNAME', username: username});
