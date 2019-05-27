@@ -9,6 +9,12 @@ export default function OnlineBoard({state, dispatch}) {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
+    if (state.gameFull === false && chatMode) {
+      setChatMode(false);
+    }
+  }, [state.gameFull])
+
+  useEffect(() => {
     if (state.response.type !== undefined) {
       clearTimeout(timeOut)
       const timeout = setTimeout(() => {
@@ -46,6 +52,12 @@ export default function OnlineBoard({state, dispatch}) {
     setMessage('')
   };
 
+  function handleKeyDown(e) {
+    if (e.key === 'Enter') {
+      sendMessage(e.target.value)
+    }
+  };
+
   function leave() {
     const msg = {
       type: "leaveGame",
@@ -64,6 +76,10 @@ export default function OnlineBoard({state, dispatch}) {
       gameId: state.gameId
     };
     state.socket.send(JSON.stringify(msg))
+  };
+
+  function reduceString(string) {
+    return string.substring(0, 30) + (string.length > 30 ? '...' : '');
   };
 
   let responseComponent;
@@ -86,7 +102,7 @@ export default function OnlineBoard({state, dispatch}) {
     case 'latestMessage':
       responseComponent = <div className={Styles.popUpTwo} onClick={startChatMode}>
         <div className={Styles.popUpName}>{response.username[0]}</div>
-        <div className={Styles.popUpMessage}>{response.message.substring(0, 30) + '...'}</div>
+        <div className={Styles.popUpMessage}>{reduceString(response.message)}</div>
       </div>
       break;
     case 'playerDisconnect': 
@@ -94,7 +110,7 @@ export default function OnlineBoard({state, dispatch}) {
       break;
   };
 
-  return (  
+  return (
     <div className={Styles.Container} style={{position: chatMode ? 'static' : 'relative'}}>
       {chatMode ?
         <div className={Styles.chatContainer}>
@@ -109,6 +125,7 @@ export default function OnlineBoard({state, dispatch}) {
                 placeholder={'Say hi'}
                 onChange={setInput}
                 className={Styles.chatInput}
+                onKeyDown={handleKeyDown}
                 value={message}
                 autoFocus={true}
               />

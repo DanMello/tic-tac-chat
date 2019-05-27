@@ -1,4 +1,4 @@
-import React,{ useEffect }from 'react';
+import React,{ useEffect, useState }from 'react';
 import Square from './Square';
 import styles from 'styles/Board.css';
 import calculateWinner from '../helpers/calculateWinner';
@@ -52,6 +52,8 @@ function gameStatus(state) {
 function Board({state, dispatch}) {
   const { squares, socket, gameFull, multiplayer, clientID } = state;
   const status = gameStatus(state);
+  const [timeOut, storeTimeOut] = useState(null);
+  const [notYourTurn, setNotYourTurn] = useState(false);
   const chunkedArray = chunkArray(squares, 3);
 
   useEffect(() => {
@@ -59,6 +61,19 @@ function Board({state, dispatch}) {
       dispatch({type: 'GAME_OVER'})
     };
   }, [status.gameOver])
+
+  useEffect(() => {
+    if (notYourTurn !== false) {
+      clearTimeout(timeOut)
+      const timeout = setTimeout(() => {
+        setNotYourTurn(false)
+      }, 1000)
+      storeTimeOut(timeout)
+    }
+    return () => {
+      clearTimeout(timeOut)
+    }
+  }, [notYourTurn])
 
   function handleClick(i) {
     if (calculateWinner(squares) || squares[i]) {
@@ -70,7 +85,7 @@ function Board({state, dispatch}) {
       }
       const nextPlayer = isPlayerNext(state);
       if (clientID !== nextPlayer.clientID) {
-        alert('its not your turn');
+        setNotYourTurn(true);
         return;
       }
       const msg = {
@@ -96,7 +111,7 @@ function Board({state, dispatch}) {
 
   return (
     <div className={styles.boardContainer}>
-      <div id='status' className={styles.status}>{status.status}</div>
+      <div id='status' className={styles.status}>{notYourTurn ? "It's not your turn." : status.status}</div>
       {chunkedArray.map((array, i) => {
         return (
           <div key={i} className={styles.boardRow}>

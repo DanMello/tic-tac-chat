@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import OnlineBoard from './OnlineBoard';
 import styles from 'styles/Create.css';
 
@@ -8,6 +8,11 @@ export default function Create ({state, dispatch, userNameError}) {
   const [move, setMove] = useState('');
   const [error, setError] = useState(null);
   const [moveError, setMoveError] = useState(null);
+
+  useEffect(() => {
+    setName('');
+    setMove('');
+  }, [state.multiplayer])
 
   function createGame() {
     if (userNameError) {
@@ -35,7 +40,7 @@ export default function Create ({state, dispatch, userNameError}) {
   };
 
   function changeMove(e) {
-    setError('');
+    setMoveError('');
     setMove(e.target.value);
   };
 
@@ -45,11 +50,11 @@ export default function Create ({state, dispatch, userNameError}) {
         <OnlineBoard state={state} dispatch={dispatch} />
         :
         <div className={styles.optionsContainer}>
-          {error}
           <label className={styles.label}>Create a room name: </label>
+          <div className={styles.error}>{error}</div>
           <input value={name} onChange={changeName} className={styles.input} />
-          {moveError}
           <label className={styles.label}>Select your move:</label>
+          <div className={styles.error}>{moveError}</div>
           <div className={styles.marginTop}>
             <input name={'move'} value={'X'} onChange={changeMove} type={'radio'}/>
             <label className={styles.moveLabel}>X</label>

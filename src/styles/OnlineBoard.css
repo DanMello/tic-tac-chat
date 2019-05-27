@@ -49,14 +49,16 @@
   font-weight: bold;
   padding: 10px;
   font-size: 20px;
-  color: #03a9f4;  
+  color: #03a9f4; 
+  cursor: pointer;
 }
 
 .sendMessage {
   font-weight: bold;
   padding: 10px;
   font-size: 18px;
-  color: #03a9f4;  
+  color: #03a9f4;
+  cursor: pointer;  
 }
 
 .chatInput {
