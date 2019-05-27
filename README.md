@@ -2,7 +2,7 @@
 
 # Play now
 
-[https://mellocloud.com/tic-tac-chat](https:mellcloud.com/tic-tac-chat)
+[https://mellocloud.com/tic-tac-chat](https://mellocloud.com/tic-tac-chat)
 
 # About
 
