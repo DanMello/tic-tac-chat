@@ -6,7 +6,7 @@
 
 # About
 
-This project was inspired by this video https://www.youtube.com/watch?v=G-aO5hzo1aw which is a live stream highlight with Dan Abramov and mpj (FunFunFunction on youtube). Dan mentioned that creating a tic tac toe app is a great way to learn the fundamentals of react and react hooks. At the end of the live stream he mentioned that it would be cool to see someone create a version of the tic tac toe game based on tutorial on the react website that uses hooks to separate different types of logic like game and history. So I did just that and I was learning a lot of new things and having fun so I just kept creating more features which now has become tic-tac-chat.
+This project was inspired by this video https://www.youtube.com/watch?v=G-aO5hzo1aw which is a live stream highlight with Dan Abramov and mpj (FunFunFunction on youtube). Dan mentioned that creating a tic tac toe app is a great way to learn the fundamentals of react and react hooks. At the end of the live stream he mentioned that it would be cool to see someone create a version of the tic tac toe game based on the tutorial on the react website that uses hooks instead of classes to separate different types of logic like game and history state. So I did just that and I was learning a lot of new things and having fun so I just kept creating more features which now has become tic-tac-chat.
 
 # What I learned in the Front-end of this project.
 
