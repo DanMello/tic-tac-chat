@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Board from './Board';
 import Styles from 'styles/OnlineBoard.css';
+import Chat from './Chat';
 
 export default function OnlineBoard({state, dispatch}) {
   
   const [chatMode, setChatMode] = useState(false);
   const [timeOut, storeTimeOut] = useState(null);
-  const [message, setMessage] = useState('');
 
   useEffect(() => {
     if (state.gameFull === false && chatMode) {
@@ -27,35 +27,9 @@ export default function OnlineBoard({state, dispatch}) {
     }
   }, [state.response])
 
-  function startChatMode(e) {
+  function startChatMode() {
     if (!state.gameFull) return;
-    setChatMode(true)
-  };
-
-  function stopChatMode(e) {
-    setChatMode(false)
-  };
-
-  function setInput(e) {
-    setMessage(e.target.value);
-  };
-
-  function sendMessage() {
-    const msg = {
-      type: "sendMessage",
-      clientID: state.clientID,
-      username: state.username,
-      gameId: state.gameId,
-      message: message
-    };
-    state.socket.send(JSON.stringify(msg))
-    setMessage('')
-  };
-
-  function handleKeyDown(e) {
-    if (e.key === 'Enter') {
-      sendMessage(e.target.value)
-    }
+    setChatMode(true);
   };
 
   function leave() {
@@ -113,49 +87,7 @@ export default function OnlineBoard({state, dispatch}) {
   return (
     <div className={Styles.Container} style={{position: chatMode ? 'static' : 'relative'}}>
       {chatMode ?
-        <div className={Styles.chatContainer}>
-          <div className={Styles.anotherContainer}>
-            <div className={Styles.subContainer}>
-              <div 
-                className={Styles.closeButton} 
-                onClick={stopChatMode}>
-                X
-              </div>
-              <input
-                placeholder={'Say hi'}
-                onChange={setInput}
-                className={Styles.chatInput}
-                onKeyDown={handleKeyDown}
-                value={message}
-                autoFocus={true}
-              />
-              <div
-                className={Styles.sendMessage} 
-                onClick={sendMessage}>
-                send
-              </div>
-            </div>
-            <div className={Styles.line}/>
-          </div>
-          <div className={Styles.mainMessageContainer}>
-            {state.chat.map((message, i) => {
-              let component;
-              message.clientID !== state.clientID ?
-                component = (
-                  <div className={Styles.messageContainerLeft} key={message.clientID + i}>
-                    <div className={Styles.chatLeft}>{message.message}</div>
-                  </div>
-                )
-                :
-                component = (
-                  <div className={Styles.messageContainerRight} key={state.clientID + i}>
-                    <div className={Styles.chatRight}>{message.message}</div>
-                  </div>
-                )
-                return component
-            })}
-          </div>
-        </div>
+        <Chat state={state} setChatMode={setChatMode} />
         :
         <div className={Styles.boardContainer}>
           <div className={Styles.gameId}>Game ID: {state.gameId}</div>
