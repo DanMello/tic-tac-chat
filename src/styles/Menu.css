@@ -1,0 +1,88 @@
+.mainContainer {
+  width: 100%;
+}
+
+.subContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+}
+
+.heading {
+  margin-top: 15px;
+  margin-bottom: 0px;
+  color: white;
+  text-align: center;
+}
+
+.gameHeading {
+  margin-top: 15px;
+  color: white;
+  text-align: center;
+}
+
+.usernameContainer {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.atme {
+  font-weight: bold;
+  font-size: 20px;
+  color:#ffeb3b;
+}
+
+.username {
+  border: none;
+  background: none;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 2px;
+  padding-right: 0px;
+  margin: 0;
+  font-size: 20px;
+  color: white;
+}
+
+.error {
+  background: rgb(223, 18, 52);
+  width: 100%;
+  text-align: center;
+  color: white;
+  padding: 2px;
+  font-family: sans-serif;
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+}
+
+.usernameError {
+  color: orangered;
+}
+
+.errorContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.newGamesContainer {
+  display: flex;
+  justify-content: center;
+  background: #2ECC40;
+  width: 100%;
+  color: white;
+  padding: 2px;
+  font-family: sans-serif;
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+}
+
+.dismiss {
+  margin-left: 4px;
+  color: white;
+  cursor: pointer;
+  text-decoration: underline;
+}

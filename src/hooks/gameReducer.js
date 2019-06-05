@@ -20,7 +20,8 @@ export default function useGameReducer (socket) {
     response: {},
     rematch: false,
     error: false,
-    gamesChanged: false
+    gamesChanged: false,
+    newGames: false
   });
 
   useEffect(() => {

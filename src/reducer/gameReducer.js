@@ -17,7 +17,8 @@ export default function gameReducer(state, action) {
     response,
     rematch,
     error,
-    gamesChanged
+    gamesChanged,
+    newGames
   } = state;
 
   switch (action.type) {
@@ -54,7 +55,7 @@ export default function gameReducer(state, action) {
         clientID: action.data.clientID,
         multiplayer: true
       };
-    }
+    } 
     case 'joinGame': {
       return {
         ...state,
@@ -224,7 +225,7 @@ export default function gameReducer(state, action) {
     case "gamesChanged" : {
       return {
         ...state,
-        gamesChanged: !gamesChanged
+        gamesChanged: true
       };
     }
     case "ERROR" : {
@@ -252,7 +253,19 @@ export default function gameReducer(state, action) {
         response: {},
         rematch: false,
         error: false,
-        gamesChanged: !gamesChanged
+        gamesChanged: false
+      }
+    }
+    case "CLEAR_ERROR" : {
+      return {
+        ...state,
+        error: false
+      }
+    }
+    case "CLEAR_NEW_GAMES" : {
+      return {
+        ...state,
+        gamesChanged: false
       }
     }
   };

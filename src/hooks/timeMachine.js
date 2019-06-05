@@ -8,7 +8,6 @@ export default function useTimeMachine(squares, dispatch) {
   const doesNotContainCurrentSquares = currentHistory.every(item => {
     const currentHistoryArray = JSON.stringify(item.squares);
     const currentArray = JSON.stringify(squares);
-
     if (currentHistoryArray !== currentArray) {
       return true;
     };

@@ -85,31 +85,34 @@ export default function OnlineBoard({state, dispatch}) {
   };
 
   return (
-    <div className={Styles.Container} style={{position: chatMode ? 'static' : 'relative'}}>
+    <div>
       {chatMode ?
         <Chat state={state} setChatMode={setChatMode} />
         :
-        <div className={Styles.boardContainer}>
-          <div className={Styles.gameId}>Game ID: {state.gameId}</div>
-          <div className={Styles.roomName}>{state.roomName}</div>
-          {responseComponent}
-          <Board state={state} dispatch={dispatch} />
-          <div
-            className={Styles.chatButton}
-            onClick={startChatMode}
-            >
-            {!state.gameFull ? 'You can chat once other player joins.' : 'Say hi..'}
-          </div>
-          <div className={Styles.bottomContainer}>
-            <div onClick={leave} className={Styles.leave}>Leave game</div>
-            {state.gameOver && !state.rematch &&
-              <div
-                onClick={rematch}
-                className={Styles.rematch}
-                >
-                Rematch
-              </div>
-            }
+        <div className={Styles.container}>
+          <h1 className={Styles.heading}>Tic-Tac-Chat</h1>
+          <div className={Styles.boardContainer}>
+            <div className={Styles.gameId}>Game ID: {state.gameId}</div>
+            <div className={Styles.roomName}>{state.roomName}</div>
+            {responseComponent}
+            <Board state={state} dispatch={dispatch} />
+            <div
+              className={Styles.chatButton}
+              onClick={startChatMode}
+              >
+              {!state.gameFull ? 'You can chat once other player joins.' : 'Say hi..'}
+            </div>
+            <div className={Styles.bottomContainer}>
+              <div onClick={leave} className={Styles.leave}>Leave game</div>
+              {state.gameOver && !state.rematch &&
+                <div
+                  onClick={rematch}
+                  className={Styles.rematch}
+                  >
+                  Rematch
+                </div>
+              }
+            </div>
           </div>
         </div>
       }

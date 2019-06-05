@@ -1,13 +1,21 @@
-.Container {
-  border-radius: 5px;
-  background: white;
+.container {
+  background: #03a9f4;
   padding: 15px;
-  margin-top: 10px;
-  width: 100%;
+  border-radius: 5px;
 }
 
 .boardContainer {
   width: 100%;
+  background: white;
+  padding: 15px;
+  border-radius: 5px;
+  position: relative;
+}
+
+.heading {
+  color: white;
+  text-align: center;
+  font-size: 30px;
 }
 
 .gameId {

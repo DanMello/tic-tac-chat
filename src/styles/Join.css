@@ -1,69 +1,56 @@
 .container {
   width: 100%;
-}
-
-.box {
+  box-sizing: border-box;
+  align-items: center;
+  font-family: sans-serif;
   display: flex;
   flex-direction: column;
-  padding: 10px;
-  border-radius: 5px;
-  color: #444;
-  font-family: sans-serif;
-  background: white;
-  margin-top: 15px;
-}
-
-.id {
-  margin-top: 5px;
-  font-weight: bold;
-}
-
-.li {
-  display: flex;
-  padding: 2px;
-  margin-left: 5px;
-}
-
-.roomName {
-  font-weight: bold;
-  font-size: 20px;
-}
-
-.value {
-  margin-left: 10px;
-  font-weight: bold;
-}
-
-.line {
-  margin-top: 5px;
-  margin-bottom: 5px;
-  border-bottom: 1px solid #ccc;
-}
-
-.button {
-  margin-top: 5px;
-  margin-right: 10px;
-  padding: 5px;
-  font-weight: bold;
   background: #03a9f4;
-  color: white;
-  width: 100px;
-  text-align: center;
   border-radius: 5px;
-  cursor: pointer;
-  align-self: flex-end;
 }
 
-.disabled {
-  background: #ccc;
+.searchingContainer {
+  width: 100%;
+  left: 0;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  padding-bottom: 15px;
+  background: #03a9f4;
+  z-index: 999;
+  transition: top 0.5s;
+}
+
+.subContainer {
+  width: 100%;
+  padding-left: 15px;
+  padding-bottom: 15px;
+  padding-right: 15px;
+  border-radius: 5px;
 }
 
 .noGames {
   color: white;
-  text-align: center;
-  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  padding-top: 20px;
 }
 
-.refresh {
-  color: blue;
+.gamesContainer, .noGames {
+  background: #03a9f4;
+}
+
+.paddingContainer {
+  transition: padding 0.5s;
+}
+
+.loader {
+  position: fixed;
+  left: 50%;
+  margin-left: -12.5px;
+}
+
+.loaderTwoContainer {
+  display: flex;
+  justify-content: center;
+  transition: margin 0.5s;
 }

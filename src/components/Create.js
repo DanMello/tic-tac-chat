@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import Menu from './Menu';
 import OnlineBoard from './OnlineBoard';
 import styles from 'styles/Create.css';
 
-export default function Create ({state, dispatch, userNameError}) {
+export default function Create ({state, dispatch}) {
 
   const [name, setName] = useState('');
   const [move, setMove] = useState('');
@@ -15,8 +16,11 @@ export default function Create ({state, dispatch, userNameError}) {
   }, [state.multiplayer])
 
   function createGame() {
-    if (userNameError) {
+    if (state.username === '') {
+      dispatch({type: 'ERROR', message: 'Username cannot be empty.'});
       return;
+    } else {
+      dispatch({type: 'CLEAR_ERROR'});
     };
     if (name === '') {
       setError('Please enter a room name.');
@@ -45,27 +49,34 @@ export default function Create ({state, dispatch, userNameError}) {
   };
 
   return (
-    <div className={styles.container}>
-      {state.multiplayer === true ?
+    <div>
+      {state.multiplayer ? 
         <OnlineBoard state={state} dispatch={dispatch} />
         :
-        <div className={styles.optionsContainer}>
-          <label className={styles.label}>Create a room name: </label>
-          <div className={styles.error}>{error}</div>
-          <input value={name} onChange={changeName} className={styles.input} />
-          <label className={styles.label}>Select your move:</label>
-          <div className={styles.error}>{moveError}</div>
-          <div className={styles.marginTop}>
-            <input name={'move'} value={'X'} onChange={changeMove} type={'radio'}/>
-            <label className={styles.moveLabel}>X</label>
+        <div className={styles.mainContainer}>
+          <div className={styles.menuContainer}>
+            <Menu state={state} dispatch={dispatch}/>
           </div>
-          <div>
-            <input name={'move'} value={'O'} onChange={changeMove} type={'radio'}/>
-            <label className={styles.moveLabel}>O</label>
+          <div className={styles.container}>
+            <div className={styles.optionsContainer}>
+              <label className={styles.label}>Create a room name: </label>
+              <div className={styles.error}>{error}</div>
+              <input value={name} onChange={changeName} className={styles.input} />
+              <label className={styles.label}>Select your move:</label>
+              <div className={styles.error}>{moveError}</div>
+              <div className={styles.marginTop}>
+                <input name={'move'} value={'X'} onChange={changeMove} type={'radio'}/>
+                <label className={styles.moveLabel}>X</label>
+              </div>
+              <div>
+                <input name={'move'} value={'O'} onChange={changeMove} type={'radio'}/>
+                <label className={styles.moveLabel}>O</label>
+              </div>
+              <button onClick={createGame} className={styles.button}>
+                Create Game
+              </button>
+            </div>
           </div>
-          <button onClick={createGame} className={styles.button}>
-            Create Game
-          </button>
         </div>
       }
     </div>

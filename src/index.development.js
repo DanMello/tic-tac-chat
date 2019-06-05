@@ -4,7 +4,7 @@ import Game from './components/Game';
 import './body.css';
 
 ReactDOM.render(
-  <div style={{padding: '10px'}}>
-    <Game config={{environment: 'development'}} />
+  <div>
+    <Game configuration={{environment: 'development', isMobile: true}} />
   </div>,
   document.getElementById('root'));
