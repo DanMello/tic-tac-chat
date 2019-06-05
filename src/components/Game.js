@@ -15,7 +15,7 @@ export default function Game (config) {
   const {socket, error} = useWebSocket(socketUrl);
   const [state, dispatch] = useGameReducer(socket);
   const {history, jumpToSquares, resetHistory} = useTimeMachine(state.squares, dispatch);
-  const [mode, setMode] = useState('join');
+  const [mode, setMode] = useState('create');
   const [inputWidth, setWidth] = useState(state.username.length + 'ch');
   let component;
 
