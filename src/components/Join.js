@@ -121,7 +121,7 @@ export default function Join({ state, dispatch }) {
 
   function hideNav() {
     const currentPageYOffset = window.pageYOffset;
-    if (getDocHeight() < window.innerHeight + 200) {
+    if (getDocHeight() < window.innerHeight + (window.innerHeight / 3)) {
       return;
     };
     if (currentPageYOffset < 0) {
@@ -218,8 +218,8 @@ export default function Join({ state, dispatch }) {
         :
         <div className={styles.container}>
           <div
-            className={styles.searchingContainer}
-            style={state.multiplayer === false ? { top: top, position: 'fixed' } : null}
+            className={isMobile ? styles.searchingContainer : styles.searchingContainerDesktop}
+            style={{ top: top }}
             ref={fixedHeader}
           >
             <Menu state={state} dispatch={dispatch} findGames={findGames} />

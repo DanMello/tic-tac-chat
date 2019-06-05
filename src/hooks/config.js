@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 
-export default function useConfig({configuration}) {
+export default function useConfig({config}) {
 
   const [url, setUrl] = useState('');
   const [socketUrl, setSocketUrl] = useState('');
-  const {environment, isMobile} = configuration;
+  const {environment, isMobile} = config;
 
   useEffect(() => {
     if (environment === 'development') {

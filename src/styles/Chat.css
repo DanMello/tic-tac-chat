@@ -1,11 +1,9 @@
 .chatContainer {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   background: white;
   border: 2px solid #ccc;
   border-radius: 5px;
+  position: relative;
 }
 
 .chatContainerMobile {
@@ -130,6 +128,16 @@
 }
 
 .playerNameContainer {
+  position: absolute;
+  height: 50px;
+  background: #eaeded;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.playerNameContainerMobile {
   position: fixed;
   height: 50px;
   background: #eaeded;

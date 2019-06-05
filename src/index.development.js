@@ -5,6 +5,6 @@ import './body.css';
 
 ReactDOM.render(
   <div>
-    <Game configuration={{environment: 'development', isMobile: true}} />
+    <Game config={{environment: 'development', isMobile: true}} />
   </div>,
   document.getElementById('root'));

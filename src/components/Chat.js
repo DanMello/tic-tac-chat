@@ -84,7 +84,7 @@ export default function Chat({state, setChatMode}) {
 
   return (
     <div className={!isMobile ? Styles.chatContainer : Styles.chatContainerMobile}>
-      <div className={Styles.playerNameContainer}>
+      <div className={!isMobile ? Styles.playerNameContainer : Styles.playerNameContainerMobile}>
         <div className={[Styles.closeButtonTop, Styles.grow].join(' ')} onClick={stopChatMode}>Close</div>
         <div className={[Styles.playerName, Styles.grow].join(' ')}>{state.otherUser.length > 0 && reduceString(state.otherUser[0].username.split(' ')[0])}</div>
         <div className={Styles.grow}/>

@@ -10,12 +10,12 @@ import Styles from '../styles/Game.css';
 
 export const ConfigContext = React.createContext();
 
-export default function Game (configuration) {
-  const {url, socketUrl, isMobile} = useConfig(configuration);
+export default function Game (config) {
+  const {url, socketUrl, isMobile} = useConfig(config);
   const {socket, error} = useWebSocket(socketUrl);
   const [state, dispatch] = useGameReducer(socket);
   const {history, jumpToSquares, resetHistory} = useTimeMachine(state.squares, dispatch);
-  const [mode, setMode] = useState('create');
+  const [mode, setMode] = useState('join');
   const [inputWidth, setWidth] = useState(state.username.length + 'ch');
   let component;
 
