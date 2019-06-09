@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Styles from 'styles/SearchGames.css';
 
-export default function Chat({filterGames, setTyping, setValue}) {
+export default function Chat({filterGames, setTyping, setValue, setFocused}) {
 
   const [timeOut, storeTimeOut] = useState(null);
 
@@ -22,7 +22,11 @@ export default function Chat({filterGames, setTyping, setValue}) {
   };
 
   function onFocus() {
-    window.scrollTo(0,0);
+    setFocused(true);
+  };
+
+  function onBlur() {
+    setFocused(false);
   };
 
   return (
@@ -31,6 +35,7 @@ export default function Chat({filterGames, setTyping, setValue}) {
         placeholder={'Search game id or room name.'}
         className={Styles.input}
         onFocus={onFocus}
+        onBlur={onBlur}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
       />

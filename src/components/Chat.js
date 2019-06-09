@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { ConfigContext } from './Game';
 import Styles from 'styles/Chat.css';
 
-export default function Chat({state, setChatMode}) {
+export default function Chat({state, setChatMode, sendMessage}) {
 
   const [message, setMessage] = useState('');
   const [paddingBottom, setPaddingBottom] = useState('10px');
@@ -32,7 +32,7 @@ export default function Chat({state, setChatMode}) {
     setMessage(e.target.value);
   };
 
-  function sendMessage() {
+  function sendMessageMethod() {
     const msg = {
       type: "sendMessage",
       clientID: state.clientID,
@@ -40,13 +40,13 @@ export default function Chat({state, setChatMode}) {
       gameId: state.gameId,
       message: message
     };
-    state.socket.send(JSON.stringify(msg))
-    setMessage('')
+    sendMessage(msg);
+    setMessage('');
   };
 
   function handleKeyDown(e) {
     if (e.key === 'Enter') {
-      sendMessage(e.target.value)
+      sendMessageMethod();
     };
     if (e.key === 'Escape') {
       setChatMode(false);
@@ -110,7 +110,7 @@ export default function Chat({state, setChatMode}) {
           />
           <div
             className={Styles.sendMessage} 
-            onClick={sendMessage}>
+            onClick={sendMessageMethod}>
             send
           </div>
         </div>

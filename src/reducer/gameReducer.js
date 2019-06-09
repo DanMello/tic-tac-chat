@@ -2,6 +2,7 @@ export default function gameReducer(state, action) {
   const {
     squares,
     isXNext,
+    firstMove,
     move,
     gameId,
     roomName,
@@ -10,15 +11,13 @@ export default function gameReducer(state, action) {
     allPlayers,
     multiplayer,
     gameFull,
-    socket,
     clientID,
     chat,
     gameOver,
     response,
     rematch,
-    error,
     gamesChanged,
-    newGames
+    topBarResponse
   } = state;
 
   switch (action.type) {
@@ -76,6 +75,8 @@ export default function gameReducer(state, action) {
         ...state,
         otherUser: otherUser,
         allPlayers: players,
+        isXNext: action.data.users[0].move === 'X' ? true : false,
+        firstMove: action.data.users[0].move,
         response: {
           type: 'userJoined',
           userThatJoined: action.data.userThatJoined
@@ -114,12 +115,6 @@ export default function gameReducer(state, action) {
         }
       }
     }
-    case "UPDATE_SOCKET": {
-      return {
-        ...state,
-        socket: action.socket
-      };
-    }
     case "UPDATE_USERNAME": {
       return {
         ...state,
@@ -147,7 +142,6 @@ export default function gameReducer(state, action) {
       return {
         ...state,
         squares: Array(9).fill(null),
-        isXNext: true,
         rematch: false,
         gameOver: false,
         allPlayers: [],
@@ -195,14 +189,18 @@ export default function gameReducer(state, action) {
         },
         rematch: false,
         squares: Array(9).fill(null),
-        isXNext: false,
+        isXNext: firstMove === 'X' ? false : true,
+        firstMove: firstMove === 'X' ? 'O' : 'X',
         gameOver: false
       }
     }
     case "error" : {
       return {
         ...state,
-        error: action.data.message
+        topBarResponse: {
+          type: "ERROR",
+          message: action.data.message 
+        }
       }
     }
     case "playerDisconnect" : {
@@ -225,14 +223,11 @@ export default function gameReducer(state, action) {
     case "gamesChanged" : {
       return {
         ...state,
-        gamesChanged: true
+        gamesChanged: !gamesChanged,
+        topBarResponse: {
+          type: 'gamesUpdated'
+        }
       };
-    }
-    case "ERROR" : {
-      return {
-        ...state,
-        error: action.message
-      }
     }
     case "RESET_STATE" : {
       return {
@@ -246,7 +241,6 @@ export default function gameReducer(state, action) {
         otherUser: [],
         multiplayer: false,
         gameFull: false,
-        socket: socket,
         clientID: null,
         chat: [],
         gameOver: false,
@@ -256,16 +250,19 @@ export default function gameReducer(state, action) {
         gamesChanged: false
       }
     }
-    case "CLEAR_ERROR" : {
+    case "TOP_BAR_RESPONSE" : {
       return {
         ...state,
-        error: false
+        topBarResponse: {
+          type: action.data.type,
+          message: action.data.message
+        }
       }
     }
-    case "CLEAR_NEW_GAMES" : {
+    case "CLEAR_TOP_BAR_RESPONSE" : {
       return {
         ...state,
-        gamesChanged: false
+        topBarResponse: {}
       }
     }
   };

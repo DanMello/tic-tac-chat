@@ -3,17 +3,7 @@
   font-family: sans-serif;
 }
 
-.Container {
-  /* display: flex;
-  box-sizing: border-box;
-  align-items: center;
-  font-family: sans-serif;
-  border-radius: 5px;
-  flex-direction: column;
-  padding-left: 15px;
-  padding-right: 15px;
-  padding-bottom: 15px;
-  background: #03a9f4;
-  width: 100%;
-  position: relative; */
+.version {
+  color: white;
+  font: 40px;
 }

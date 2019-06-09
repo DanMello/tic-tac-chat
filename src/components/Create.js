@@ -3,7 +3,7 @@ import Menu from './Menu';
 import OnlineBoard from './OnlineBoard';
 import styles from 'styles/Create.css';
 
-export default function Create ({state, dispatch}) {
+export default function Create ({state, dispatch, sendMessage}) {
 
   const [name, setName] = useState('');
   const [move, setMove] = useState('');
@@ -17,10 +17,16 @@ export default function Create ({state, dispatch}) {
 
   function createGame() {
     if (state.username === '') {
-      dispatch({type: 'ERROR', message: 'Username cannot be empty.'});
+      dispatch({
+        type: 'TOP_BAR_RESPONSE',
+        data: {
+          type: 'ERROR',
+          message: 'Username cannot be empty.'
+        }
+      });
       return;
     } else {
-      dispatch({type: 'CLEAR_ERROR'});
+      dispatch({type: 'CLEAR_TOP_BAR_RESPONSE'});
     };
     if (name === '') {
       setError('Please enter a room name.');
@@ -35,7 +41,7 @@ export default function Create ({state, dispatch}) {
       username: state.username,
       move: move
     };
-    state.socket.send(JSON.stringify(msg))
+    sendMessage(msg)
   };  
 
   function changeName(e) {
@@ -51,7 +57,7 @@ export default function Create ({state, dispatch}) {
   return (
     <div>
       {state.multiplayer ? 
-        <OnlineBoard state={state} dispatch={dispatch} />
+        <OnlineBoard state={state} dispatch={dispatch} sendMessage={sendMessage}/>
         :
         <div className={styles.mainContainer}>
           <div className={styles.menuContainer}>

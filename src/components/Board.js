@@ -49,8 +49,8 @@ function gameStatus(state) {
   };
 };
 
-function Board({state, dispatch}) {
-  const { squares, socket, gameFull, multiplayer, clientID } = state;
+function Board({state, dispatch, sendMessage}) {
+  const { squares, gameFull, multiplayer, clientID } = state;
   const status = gameStatus(state);
   const [timeOut, storeTimeOut] = useState(null);
   const [notYourTurn, setNotYourTurn] = useState(false);
@@ -93,7 +93,7 @@ function Board({state, dispatch}) {
         index: i,
         gameId: state.gameId
       };
-      socket.send(JSON.stringify(msg));
+      sendMessage(msg);
     } else {
       dispatch({type: 'SELECT_SQUARE', index: i});
     };

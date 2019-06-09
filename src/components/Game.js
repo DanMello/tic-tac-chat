@@ -2,46 +2,33 @@ import React, { useState, useEffect } from 'react'
 import Offline from './Offline';
 import Create from './Create';
 import Join from './Join';
-import useConfig from '../hooks/config';
+import getConfig from '../helpers/getConfig';
 import useWebSocket from '../hooks/webSocket';
 import useGameReducer from '../hooks/gameReducer';
 import useTimeMachine from '../hooks/timeMachine';
+import useLocalStorage from '../hooks/localStorage';
 import Styles from '../styles/Game.css';
 
 export const ConfigContext = React.createContext();
 
 export default function Game (config) {
-  const {url, socketUrl, isMobile} = useConfig(config);
-  const {socket, error} = useWebSocket(socketUrl);
-  const [state, dispatch] = useGameReducer(socket);
-  const {history, jumpToSquares, resetHistory} = useTimeMachine(state.squares, dispatch);
-  const [mode, setMode] = useState('create');
+  const {url, socketUrl, isMobile} = getConfig(config);
+  const [state, dispatch] = useGameReducer();
+  const { history, jumpToSquares, resetHistory } = useTimeMachine(state.squares, dispatch);
+  const { sendMessage } = useWebSocket(socketUrl, dispatch);
+  const [mode, setMode] = useLocalStorage('mode','create');
   const [inputWidth, setWidth] = useState(state.username.length + 'ch');
-  let component;
-
+  
   useEffect(() => { 
-    setWidth(state.username.length + 1 + 'ch')
+    setWidth(state.username.length + 1 + 'ch');
   }, [state.username]);
-
-  useEffect(() => {
-    if (error !== null) {
-      dispatch({type: 'ERROR', message: error})
-    }
-  }, [error])
 
   function resetBoard () {
     dispatch({type: 'RESET_SQUARE'});
     resetHistory();
   };
 
-  function changeUsername(e) {
-    if (e.target.value === '') {
-      dispatch({type: 'ERROR', message: 'Username cannot be empty'});
-    } else {
-      dispatch({type: 'CLEAR_ERROR'});
-    }
-    dispatch({type: 'UPDATE_USERNAME', username: e.target.value});
-  };
+  let component;
 
   switch(mode) {
     case "offline":
@@ -57,12 +44,14 @@ export default function Game (config) {
       component = <Create 
                     state={state}
                     dispatch={dispatch}
+                    sendMessage={sendMessage}
                   />
       break;
     case "join":
-      component = <Join 
+      component = <Join
                     state={state}
                     dispatch={dispatch}
+                    sendMessage={sendMessage}
                   />
   }
 
@@ -72,14 +61,11 @@ export default function Game (config) {
       isMobile: isMobile,
       setMode: setMode,
       mode: mode,
-      changeUsername: changeUsername,
       inputWidth: inputWidth
       }}
       >
         <div className={Styles.mainContainer}>
-          <div className={Styles.Container}>
-            {component}
-          </div>
+          {component}
         </div>
     </ConfigContext.Provider>
   );

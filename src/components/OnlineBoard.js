@@ -3,7 +3,7 @@ import Board from './Board';
 import Styles from 'styles/OnlineBoard.css';
 import Chat from './Chat';
 
-export default function OnlineBoard({state, dispatch}) {
+export default function OnlineBoard({state, dispatch, sendMessage}) {
   
   const [chatMode, setChatMode] = useState(false);
   const [timeOut, storeTimeOut] = useState(null);
@@ -39,7 +39,7 @@ export default function OnlineBoard({state, dispatch}) {
       username: state.username,
       gameId: state.gameId
     };
-    state.socket.send(JSON.stringify(msg))
+    sendMessage(msg);
   };
 
   function rematch() {
@@ -49,7 +49,7 @@ export default function OnlineBoard({state, dispatch}) {
       username: state.username,
       gameId: state.gameId
     };
-    state.socket.send(JSON.stringify(msg))
+    sendMessage(msg);
   };
 
   function reduceString(string) {
@@ -87,15 +87,16 @@ export default function OnlineBoard({state, dispatch}) {
   return (
     <div>
       {chatMode ?
-        <Chat state={state} setChatMode={setChatMode} />
+        <Chat state={state} setChatMode={setChatMode} sendMessage={sendMessage}/>
         :
         <div className={Styles.container}>
+          <div className={Styles.version}>v1.0.0</div>
           <h1 className={Styles.heading}>Tic-Tac-Chat</h1>
           <div className={Styles.boardContainer}>
             <div className={Styles.gameId}>Game ID: {state.gameId}</div>
             <div className={Styles.roomName}>{state.roomName}</div>
             {responseComponent}
-            <Board state={state} dispatch={dispatch} />
+            <Board state={state} dispatch={dispatch} sendMessage={sendMessage}/>
             <div
               className={Styles.chatButton}
               onClick={startChatMode}

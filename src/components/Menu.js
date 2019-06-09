@@ -1,38 +1,51 @@
-import React, {useContext} from 'react';
+import React, { useEffect, useContext } from 'react';
 import Styles from 'styles/Menu.css';
+import TopBarResponse from './TopBarResponse';
 import SelectMode from './SelectMode';
 import { ConfigContext } from './Game';
 
 export default function Menu({state, dispatch, findGames}) {
 
-  const {mode, setMode, changeUsername, inputWidth, isMobile} = useContext(ConfigContext);
+  const {mode, setMode, inputWidth} = useContext(ConfigContext);
 
-  function dismissError() {
-    dispatch({type: 'CLEAR_ERROR'});
-  };
+  useEffect(() => {
+    function randomUsername() {
+      var S4 = function() {
+         return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+      };
+      return ('user' + S4()+S4());
+    };
+    const username = localStorage.getItem('username');
+    if (username === null || username === '') {
+      dispatch({type: 'UPDATE_USERNAME', username: randomUsername()});
+    } else {
+      dispatch({type: 'UPDATE_USERNAME', username: username});
+    };
+  }, []);
 
-  function updateGames() {
-    dispatch({type: 'CLEAR_NEW_GAMES'});
-    findGames();
+  useEffect(() => {
+    localStorage.setItem('username', state.username);
+  }, [state.username]);
+
+  function changeUsername(e) {
+    if (e.target.value === '') {
+      dispatch({
+        type: 'TOP_BAR_RESPONSE',
+        data: {
+          type: 'ERROR',
+          message: 'Username cannot be empty.'
+        }
+      });
+    } else {
+      dispatch({type: 'CLEAR_TOP_BAR_RESPONSE'});
+    }
+    dispatch({type: 'UPDATE_USERNAME', username: e.target.value});
   };
 
   return (
     <div className={Styles.mainContainer}>
-      <div className={state.error ? Styles.error : ''}>
-        {state.error && 
-          <div className={Styles.errorContainer}>
-            {state.error}
-            <div className={Styles.dismiss} onClick={dismissError}>dismiss</div>
-          </div> 
-        }
-      </div>
-      <div>
-      {!state.error && state.gamesChanged && !state.multiplayer && mode === 'join' &&
-          <div className={Styles.newGamesContainer}>
-            Games have been updated. {isMobile ? ' Pull to refresh.' : <div className={Styles.dismiss} onClick={updateGames}>update games</div>}
-          </div> 
-        }
-      </div>
+      <TopBarResponse state={state} dispatch={dispatch} findGames={findGames} />
+      <div className={Styles.version}>v1.0.0</div>
       <h1 className={Styles.heading}>Tic-Tac-Chat</h1>
       {!state.multiplayer &&
         <div className={Styles.subContainer}>

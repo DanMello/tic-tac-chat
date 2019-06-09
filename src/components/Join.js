@@ -7,7 +7,7 @@ import ShowGames from './ShowGames';
 import Loader from './Loader';
 import styles from 'styles/Join.css';
 
-export default function Join({ state, dispatch }) {
+export default function Join({ state, dispatch, sendMessage }) {
   const [games, setGames] = useState([]);
   const [filteredGames, setFilteredGames] = useState([]);
   const [searchValue, setValue] = useState('');
@@ -18,12 +18,16 @@ export default function Join({ state, dispatch }) {
   const [typing, setTyping] = useState(false);
   const [top, setTop] = useState('0');
   const [loaderStep, setLoaderStep] = useState(0);
+  const [focused, setFocused] = useState(false);
   const fixedHeader = React.createRef();
   const bottomContainerRef = React.createRef();
   const gamesContainerRef = React.createRef();
-
+  
   useEffect(() => {
     window.addEventListener('scroll', hideNav);
+    if (!isMobile) {
+      window.addEventListener('resize', resize);
+    };
     if (isMobile) {
       window.addEventListener('touchmove', swipe);
       window.addEventListener('touchend', swipeEnd);
@@ -32,6 +36,9 @@ export default function Join({ state, dispatch }) {
     };
     return () => {
       window.removeEventListener('scroll', hideNav);
+      if (!isMobile) {
+        window.removeEventListener('resize', resize);
+      };
       if (isMobile) {
         window.removeEventListener('touchmove', swipe);
         window.removeEventListener('touchend', swipeEnd);
@@ -42,26 +49,29 @@ export default function Join({ state, dispatch }) {
   });
 
   useEffect(() => {
+    findGames();
+  }, []);
+
+  useEffect(() => {
+    window.scrollTo(0,0);
     setTop('0');
-  }, [state.error, state.gamesChanged]);
+  }, [focused]); 
+
+  useEffect(() => {
+    setTop('0');
+  }, [state.topBarResponse, state.gamesChanged]);
 
   useEffect(() => {
     if (fixedHeader.current !== null) {
       setHeaderHeight(fixedHeader.current.clientHeight);
     };
-  }, [fixedHeader, state.error, state.gamesChanged]);
-
-  useEffect(() => {
-    if (url !== '') {
-      findGames();
-    };
-  }, [url]);
+  }, [fixedHeader, state.topBarResponse, state.gamesChanged]);
 
   useEffect(() => {
     if (searchValue === '') {
       setFilteredGames([]);
     };
-  }, [searchValue])
+  }, [searchValue]);
 
   function findGamesPromise() {
     return new Promise((resolve, reject) => {
@@ -86,10 +96,16 @@ export default function Join({ state, dispatch }) {
     findGamesPromise().then(response => {
       setGames(response);
       setLoading(false);
-      dispatch({ type: 'CLEAR_NEW_GAMES' });
+      dispatch({type: 'CLEAR_TOP_BAR_RESPONSE'});
     }).catch(err => {
       setLoading(false);
-      dispatch({ type: 'ERROR', message: err.message });
+      dispatch({
+        type: 'TOP_BAR_RESPONSE',
+        data: {
+          type: 'ERROR',
+          message: err.message
+        }
+      });
     });
   };
 
@@ -105,7 +121,13 @@ export default function Join({ state, dispatch }) {
       };
     }).catch(err => {
       setLoading(false);
-      dispatch({type: 'ERROR', message: err.message});
+      dispatch({
+        type: 'TOP_BAR_RESPONSE',
+        data: {
+          type: 'ERROR',
+          message: err.message
+        }
+      });
     });
   };
 
@@ -121,13 +143,15 @@ export default function Join({ state, dispatch }) {
 
   function hideNav() {
     const currentPageYOffset = window.pageYOffset;
-    if (getDocHeight() < window.innerHeight + (window.innerHeight / 3)) {
+    if (bottomContainerRef.current !== null) {
+      if ((bottomContainerRef.current.offsetHeight - headerHight) < window.innerHeight + 40 && top === '0') {
+        return;
+      };
+    };
+    if (currentPageYOffset <= 0) {
       return;
     };
-    if (currentPageYOffset < 0) {
-      return;
-    };
-    if (Math.abs(currentPageYOffset - pageYOffset) < 80) {
+    if (Math.abs(currentPageYOffset - pageYOffset) < 40) {
       return;
     };
     if ((window.pageYOffset + window.innerHeight) >= getDocHeight()) {
@@ -141,7 +165,12 @@ export default function Join({ state, dispatch }) {
     setPageYOffset(currentPageYOffset);
   };
 
+  function resize () {
+    setTop('0');
+  };
+
   function swipe() {
+    if (state.loading) return;
     if (window.pageYOffset <= 0) {
       if (loaderStep === 4) return;
       if (bottomContainerRef.current !== null) {
@@ -167,6 +196,7 @@ export default function Join({ state, dispatch }) {
   };
 
   function swipeEnd() {
+    if (state.loading) return;
     if (loaderStep === 3) {
       setLoaderStep(4);
       findGamesPromise().then(response => {
@@ -175,10 +205,16 @@ export default function Join({ state, dispatch }) {
         if (searchValue) {
           filterGames(searchValue);
         };
-        dispatch({ type: 'CLEAR_NEW_GAMES' });
+        dispatch({type: 'CLEAR_TOP_BAR_RESPONSE'});
       }).catch(err => {
         setLoaderStep(0);
-        dispatch({ type: 'ERROR', message: err.message });
+        dispatch({
+          type: 'TOP_BAR_RESPONSE',
+          data: {
+            type: 'ERROR',
+            message: err.message
+          }
+        });
       });
     } else {
       setLoaderStep(0);
@@ -187,20 +223,32 @@ export default function Join({ state, dispatch }) {
 
   function joinGame(gameId, playersLength) {
     if (state.username === '') {
-      dispatch({ type: 'ERROR', message: 'Username cannot be empty.' });
+      dispatch({
+        type: 'TOP_BAR_RESPONSE',
+        data: {
+          type: 'ERROR',
+          message: 'Username cannot be empty.'
+        }
+      });
       return;
     } else if (playersLength > 1) {
-      dispatch({ type: 'ERROR', message: 'Game is full.' });
+      dispatch({
+        type: 'TOP_BAR_RESPONSE',
+        data: {
+          type: 'ERROR',
+          message: 'Game is full.'
+        }
+      });
       return;
     } else {
-      dispatch({ type: 'CLEAR_ERROR' });
+      dispatch({ type: 'CLEAR_TOP_BAR_RESPONSE' });
     };
     const msg = {
       type: "joinGame",
       username: state.username,
       gameId: gameId
     };
-    state.socket.send(JSON.stringify(msg))
+    sendMessage(msg);
   };
 
   let arrayOfGames;
@@ -214,12 +262,12 @@ export default function Join({ state, dispatch }) {
   return (
     <div>
       {state.multiplayer === true ?
-        <OnlineBoard state={state} dispatch={dispatch} />
+        <OnlineBoard state={state} dispatch={dispatch} sendMessage={sendMessage}/>
         :
         <div className={styles.container}>
           <div
             className={isMobile ? styles.searchingContainer : styles.searchingContainerDesktop}
-            style={{ top: top }}
+            style={focused && isMobile ? {top: '0'} : { top: top }}
             ref={fixedHeader}
           >
             <Menu state={state} dispatch={dispatch} findGames={findGames} />
@@ -228,14 +276,19 @@ export default function Join({ state, dispatch }) {
                 filterGames={filterGames}
                 setValue={setValue}
                 setTyping={setTyping}
+                setFocused={setFocused}
               />
             }
           </div>
-          <div className={styles.subContainer}>
+          <div 
+            className={styles.subContainer}
+            ref={bottomContainerRef}
+            style={top !== '0' && (!focused && isMobile) ? { paddingTop: '10px' } : { paddingTop: headerHight + 'px' }}  
+          >
             {loading ?
-              <Loader className={styles.loader} color={'#03a9f4'} style={{ top: headerHight + 10 + 'px' }} />
+              <Loader className={styles.loader} color={'white'} />
               :
-              <div className={styles.paddingContainer} ref={bottomContainerRef} style={top !== '0' ? { paddingTop: '10px' } : { paddingTop: headerHight + 'px' }}>
+              <div className={styles.bottomContainer}>
                 {isMobile &&
                   <div
                     className={styles.loaderTwoContainer}
