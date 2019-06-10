@@ -15,7 +15,7 @@ export default function Game (config) {
   const {url, socketUrl, isMobile} = getConfig(config);
   const [state, dispatch] = useGameReducer();
   const { history, jumpToSquares, resetHistory } = useTimeMachine(state.squares, dispatch);
-  const { sendMessage } = useWebSocket(socketUrl, dispatch);
+  const { sendMessage } = useWebSocket(state, dispatch, socketUrl);
   const [mode, setMode] = useLocalStorage('mode','create');
   const [inputWidth, setWidth] = useState(state.username.length + 'ch');
   

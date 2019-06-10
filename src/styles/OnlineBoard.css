@@ -1,7 +1,13 @@
 .container {
   background: #03a9f4;
-  padding: 15px;
-  border-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+.subContainer {
+  padding-left: 15px;
+  padding-bottom: 15px;
+  padding-right: 15px;
 }
 
 .boardContainer {
@@ -105,7 +111,6 @@
 
 .version {
   color: white;
-  position: absolute;
-  left: 5px;
-  top: 5px;
+  padding-left: 5px;
+  padding-top: 5px;
 }

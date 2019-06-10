@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export default function useWebSocket(socketUrl, dispatch) {
+export default function useWebSocket(state, dispatch, socketUrl) {
 
   const [socket, setSocket] = useState(null);
   const [reconnect, setReconnect] = useState(null);
@@ -8,7 +8,11 @@ export default function useWebSocket(socketUrl, dispatch) {
 
   useEffect(() => {
     if (reconnect === null || reconnect === true) {
-      let s = new WebSocket(socketUrl);
+      let url = socketUrl
+      if (state.clientID) {
+        url += `?clientID=${state.clientID}`; 
+      };
+      let s = new WebSocket(url);
       setSocket(s);
       if (reconnect === true) {
         s.addEventListener('open', openSocket);
@@ -40,7 +44,6 @@ export default function useWebSocket(socketUrl, dispatch) {
   };
 
   function closeSocket() {
-    dispatch({type: 'RESET_STATE'});
     dispatch({
       type: 'TOP_BAR_RESPONSE',
       data: {
@@ -52,6 +55,7 @@ export default function useWebSocket(socketUrl, dispatch) {
       setReconnect(true);
     }, 300);
     setReconnectTimeOut(setTimeout(() => {
+      dispatch({type: 'RESET_STATE'});
       dispatch({
         type: 'TOP_BAR_RESPONSE',
         data: {

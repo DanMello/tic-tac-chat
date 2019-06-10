@@ -96,7 +96,9 @@ export default function Join({ state, dispatch, sendMessage }) {
     findGamesPromise().then(response => {
       setGames(response);
       setLoading(false);
-      dispatch({type: 'CLEAR_TOP_BAR_RESPONSE'});
+      if (state.topBarResponse.type === 'gamesUpdated') {
+        dispatch({type: 'CLEAR_TOP_BAR_RESPONSE'});
+      };
     }).catch(err => {
       setLoading(false);
       dispatch({
@@ -205,7 +207,9 @@ export default function Join({ state, dispatch, sendMessage }) {
         if (searchValue) {
           filterGames(searchValue);
         };
-        dispatch({type: 'CLEAR_TOP_BAR_RESPONSE'});
+        if (state.topBarResponse.type === 'gamesUpdated') {
+          dispatch({type: 'CLEAR_TOP_BAR_RESPONSE'});
+        };
       }).catch(err => {
         setLoaderStep(0);
         dispatch({

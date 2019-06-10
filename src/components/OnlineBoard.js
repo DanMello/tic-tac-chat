@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Board from './Board';
+import TopBarResponse from './TopBarResponse';
 import Styles from 'styles/OnlineBoard.css';
 import Chat from './Chat';
 
@@ -84,35 +85,42 @@ export default function OnlineBoard({state, dispatch, sendMessage}) {
       break;
   };
 
+  const condition = state.topBarResponse.type === 'ERROR' || state.topBarResponse.type === 'MESSAGE';
+
   return (
     <div>
       {chatMode ?
         <Chat state={state} setChatMode={setChatMode} sendMessage={sendMessage}/>
         :
-        <div className={Styles.container}>
-          <div className={Styles.version}>v1.0.0</div>
-          <h1 className={Styles.heading}>Tic-Tac-Chat</h1>
-          <div className={Styles.boardContainer}>
-            <div className={Styles.gameId}>Game ID: {state.gameId}</div>
-            <div className={Styles.roomName}>{state.roomName}</div>
-            {responseComponent}
-            <Board state={state} dispatch={dispatch} sendMessage={sendMessage}/>
-            <div
-              className={Styles.chatButton}
-              onClick={startChatMode}
-              >
-              {!state.gameFull ? 'You can chat once other player joins.' : 'Say hi..'}
-            </div>
-            <div className={Styles.bottomContainer}>
-              <div onClick={leave} className={Styles.leave}>Leave game</div>
-              {state.gameOver && !state.rematch &&
+        <div>
+          <TopBarResponse state={state} dispatch={dispatch} />
+          <div className={Styles.container} style={condition ? {borderTopLeftRadius: '0px', borderTopRightRadius: '0px'} : {borderTopLeftRadius: '5px', borderTopRightRadius: '5px'}}>
+            <div className={Styles.version}>v1.0.0</div>
+            <div className={Styles.subContainer}>
+              <h1 className={Styles.heading}>Tic-Tac-Chat</h1>
+              <div className={Styles.boardContainer}>
+                <div className={Styles.gameId}>Game ID: {state.gameId}</div>
+                <div className={Styles.roomName}>{state.roomName}</div>
+                {responseComponent}
+                <Board state={state} dispatch={dispatch} sendMessage={sendMessage}/>
                 <div
-                  onClick={rematch}
-                  className={Styles.rematch}
+                  className={Styles.chatButton}
+                  onClick={startChatMode}
                   >
-                  Rematch
+                  {!state.gameFull ? 'You can chat once other player joins.' : 'Say hi..'}
                 </div>
-              }
+                <div className={Styles.bottomContainer}>
+                  <div onClick={leave} className={Styles.leave}>Leave game</div>
+                  {state.gameOver && !state.rematch &&
+                    <div
+                      onClick={rematch}
+                      className={Styles.rematch}
+                      >
+                      Rematch
+                    </div>
+                  }
+                </div>
+              </div>
             </div>
           </div>
         </div>
