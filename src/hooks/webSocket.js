@@ -7,28 +7,43 @@ export default function useWebSocket(state, dispatch, socketUrl) {
   const [reconnectTimeOut, setReconnectTimeOut] = useState(null);
 
   useEffect(() => {
-    let url = socketUrl
-    if (state.clientID) {
-      url += `?clientID=${state.clientID}`; 
-    };
-    let s = new WebSocket(url);
-    if (reconnect !== false) {
-      setSocket(s);
-      if (reconnect === true) {
-        s.addEventListener('open', openSocket);
+    if (reconnect === null || reconnect === true) {
+      let url = socketUrl;
+      if (state.clientID) {
+        url += `?clientID=${state.clientID}`;
       };
-      s.addEventListener('message', createSocketEvents);
-      s.addEventListener('close', closeSocket);
-      s.addEventListener('error', error);
-    };
-    return () => {
-      s.close();
-      s.removeEventListener('open', openSocket);
-      s.removeEventListener('message', createSocketEvents);
-      s.removeEventListener('close', closeSocket);
-      s.removeEventListener('error', error);
+      let s = new WebSocket(url);
+      setSocket(s);
     };
   }, [reconnect]);
+
+  useEffect(() => {
+    let unMount;
+    if (socket !== null) {
+      unMount = () => {
+        socket.close(4001);
+        socket.removeEventListener('open', openSocket);
+        socket.removeEventListener('message', createSocketEvents);
+        socket.removeEventListener('close', closeSocket);
+        socket.removeEventListener('error', error);
+        window.removeEventListener('beforeunload', unMount);
+        window.removeEventListener('pagehide', unMount);
+      };
+      if (reconnect === true) {
+       socket.addEventListener('open', openSocket);
+      };
+      socket.addEventListener('message', createSocketEvents);
+      socket.addEventListener('close', closeSocket);
+      socket.addEventListener('error', error);
+      window.addEventListener('beforeunload', unMount);
+      window.addEventListener('pagehide', unMount);
+    };
+    return () => {
+      if (typeof unMount === 'function') {
+        unMount();
+      };
+    };
+  }, [socket])
 
   function openSocket() {
     dispatch({
@@ -62,6 +77,7 @@ export default function useWebSocket(state, dispatch, socketUrl) {
       setReconnect(true);
     }, 300);
     setReconnectTimeOut(setTimeout(() => {
+      socket.close(4001);
       dispatch({type: 'RESET_STATE'});
       dispatch({
         type: 'TOP_BAR_RESPONSE',

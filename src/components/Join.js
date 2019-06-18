@@ -68,6 +68,12 @@ export default function Join({ state, dispatch, sendMessage }) {
   }, [fixedHeader, state.topBarResponse, state.gamesChanged]);
 
   useEffect(() => {
+    if (games.length < 2) {
+      setValue('');
+    };
+  }, [games]);
+
+  useEffect(() => {
     if (searchValue === '') {
       setFilteredGames([]);
     };
@@ -96,6 +102,9 @@ export default function Join({ state, dispatch, sendMessage }) {
     findGamesPromise().then(response => {
       setGames(response);
       setLoading(false);
+      if (searchValue) {
+        filterGames(searchValue);
+      };
       if (state.topBarResponse.type === 'gamesUpdated') {
         dispatch({type: 'CLEAR_TOP_BAR_RESPONSE'});
       };
@@ -257,7 +266,7 @@ export default function Join({ state, dispatch, sendMessage }) {
 
   let arrayOfGames;
 
-  if (filteredGames.length > 0 || searchValue) {
+  if ((filteredGames.length > 0 || searchValue) && games.length > 1) {
     arrayOfGames = filteredGames;
   } else {
     arrayOfGames = games;

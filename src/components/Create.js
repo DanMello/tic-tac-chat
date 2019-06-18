@@ -41,7 +41,7 @@ export default function Create ({state, dispatch, sendMessage}) {
       username: state.username,
       move: move
     };
-    sendMessage(msg)
+    sendMessage(msg);
   };  
 
   function changeName(e) {
