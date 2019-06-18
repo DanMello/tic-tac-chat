@@ -7,19 +7,26 @@ export default function useWebSocket(state, dispatch, socketUrl) {
   const [reconnectTimeOut, setReconnectTimeOut] = useState(null);
 
   useEffect(() => {
-    if (reconnect === null || reconnect === true) {
-      let url = socketUrl
-      if (state.clientID) {
-        url += `?clientID=${state.clientID}`; 
-      };
-      let s = new WebSocket(url);
+    let url = socketUrl
+    if (state.clientID) {
+      url += `?clientID=${state.clientID}`; 
+    };
+    let s = new WebSocket(url);
+    if (reconnect !== false) {
       setSocket(s);
       if (reconnect === true) {
         s.addEventListener('open', openSocket);
-      }
+      };
       s.addEventListener('message', createSocketEvents);
       s.addEventListener('close', closeSocket);
       s.addEventListener('error', error);
+    };
+    return () => {
+      s.close();
+      s.removeEventListener('open', openSocket);
+      s.removeEventListener('message', createSocketEvents);
+      s.removeEventListener('close', closeSocket);
+      s.removeEventListener('error', error);
     };
   }, [reconnect]);
 
