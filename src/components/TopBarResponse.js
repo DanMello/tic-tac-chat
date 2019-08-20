@@ -10,6 +10,8 @@ export default function TopBarResponse({state, dispatch, findGames}) {
 
   function clearTopBarResponse() {
     dispatch({ type: 'CLEAR_TOP_BAR_RESPONSE' });
+    //Removes params so if you refresh it wont try to join game again.
+    window.history.pushState(null, null, window.location.pathname);
   };
 
   switch(topBarResponse.type) {

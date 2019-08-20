@@ -18,6 +18,20 @@ export default function Game (config) {
   const { sendMessage } = useWebSocket(state, dispatch, socketUrl);
   const [mode, setMode] = useLocalStorage('mode','create');
   const [inputWidth, setWidth] = useState(state.username.length + 'ch');
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    if (error) {
+      dispatch({
+        type: 'TOP_BAR_RESPONSE',
+        data: {
+          type: 'ERROR',
+          message: error
+        }
+      });
+    };
+  }, []);
   
   useEffect(() => { 
     setWidth(state.username.length + 1 + 'ch');

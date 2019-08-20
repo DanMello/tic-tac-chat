@@ -7,6 +7,7 @@ import chunkArray from '../helpers/chunkArray';
 function isPlayerNext(state) {
   const {isXNext,allPlayers} = state;
   const nextMove = (isXNext ? 'X' : 'O');
+  console.log(allPlayers)
   const nextPlayer = allPlayers
     .filter(user => user.move === nextMove)
     .reduce((acc, current) => ({...acc, ...current}), {});

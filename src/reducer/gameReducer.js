@@ -17,7 +17,8 @@ export default function gameReducer(state, action) {
     response,
     rematch,
     gamesChanged,
-    topBarResponse
+    topBarResponse,
+    host
   } = state;
 
   switch (action.type) {
@@ -52,7 +53,8 @@ export default function gameReducer(state, action) {
         move: action.data.move,
         username: action.data.username,
         clientID: action.data.clientID,
-        multiplayer: true
+        multiplayer: true,
+        host: true
       };
     } 
     case 'joinGame': {
@@ -63,11 +65,12 @@ export default function gameReducer(state, action) {
         roomName: action.data.roomName,
         username: action.data.username,
         clientID: action.data.clientID,
-        multiplayer: true
+        multiplayer: true,
+        host: false
       };
     }
     case 'notifyAllUsers': {
-      const you = {username: username, move: move, clientID: clientID};
+      const you = {username: username, move: move, clientID: clientID, host: host};
       const otherUser = action.data.users.filter(user => user.move !== move);
       const players = [you].concat(otherUser[0]);
 
@@ -133,10 +136,46 @@ export default function gameReducer(state, action) {
         gameOver: false,
         allPlayers: [],
         otherUser: [],
+        host: false,
         multiplayer: false,
         gameFull: false,
         chat: []
       };
+    }
+    case "kicked": {
+      return {
+        ...state,
+        squares: Array(9).fill(null),
+        isXNext: true,
+        move: null,
+        gameId: null,
+        roomName: null,
+        rematch: false,
+        gameOver: false,
+        allPlayers: [],
+        otherUser: [],
+        host: false,
+        multiplayer: false,
+        gameFull: false,
+        chat: [],
+        topBarResponse: {
+          type: 'MESSAGE',
+          message: 'You got kicked lol'
+        }
+      }
+    }
+    case "playerwaskicked": {
+      return {
+        ...state,
+        squares: Array(9).fill(null),
+        rematch: false,
+        gameOver: false,
+        allPlayers: [],
+        otherUser: [],
+        gameFull: false,
+        host: true,
+        chat: []
+      }
     }
     case "notifyUserLeft": {
       return {
@@ -147,6 +186,7 @@ export default function gameReducer(state, action) {
         allPlayers: [],
         otherUser: [],
         gameFull: false,
+        host: true,
         chat: [],
         response: {
           type: 'userLeft',
@@ -158,7 +198,7 @@ export default function gameReducer(state, action) {
       return {
         ...state,
         gameOver: true
-      };
+      }
     }
     case "CLEAR_RESPONSE": {
       return {

@@ -10,9 +10,9 @@ export default function useGameReducer () {
     roomName: null,
     username: '',
     allPlayers: [],
-    otherUser: [],
-    multiplayer: false,
-    gameFull: false,
+    otherUser: [], //changed
+    multiplayer: false, //changed
+    gameFull: false, // changed
     clientID: null,
     chat: [],
     gameOver: false,
@@ -20,7 +20,8 @@ export default function useGameReducer () {
     rematch: false,
     error: false,
     gamesChanged: false,
-    topBarResponse: {}
-  });
+    topBarResponse: {},
+    host: false //changed
+  }); 
   return [state, dispatch];
 };

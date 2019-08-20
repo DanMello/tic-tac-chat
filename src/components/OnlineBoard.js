@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import Board from './Board';
-import TopBarResponse from './TopBarResponse';
-import Styles from 'styles/OnlineBoard.css';
+import OnlineGame from './OnlineGame';
+import Options from './Options';
 import Chat from './Chat';
 
 export default function OnlineBoard({state, dispatch, sendMessage}) {
   
-  const [chatMode, setChatMode] = useState(false);
+  const [component, setComponent] = useState('GAME');
   const [timeOut, storeTimeOut] = useState(null);
 
   useEffect(() => {
-    if (state.gameFull === false && chatMode) {
-      setChatMode(false);
+    if (state.gameFull === false && component === 'CHAT') {
+      setComponent('GAME');
     }
-  }, [state.gameFull])
+  }, [state.gameFull]);
 
   useEffect(() => {
     if (state.response.type !== undefined) {
@@ -26,105 +25,48 @@ export default function OnlineBoard({state, dispatch, sendMessage}) {
     return () => {
       clearTimeout(timeOut)
     }
-  }, [state.response])
+  }, [state.response]);
 
   function startChatMode() {
     if (!state.gameFull) return;
-    setChatMode(true);
+    setComponent('CHAT');
   };
 
-  function leave() {
-    const msg = {
-      type: "leaveGame",
-      clientID: state.clientID,
-      username: state.username,
-      gameId: state.gameId
-    };
-    sendMessage(msg);
+  function openOptions() {
+    setComponent('OPTIONS');
   };
 
-  function rematch() {
-    const msg = {
-      type: "rematch",
-      clientID: state.clientID,
-      username: state.username,
-      gameId: state.gameId
-    };
-    sendMessage(msg);
+  function openGame() {
+    setComponent('GAME');
   };
 
-  function reduceString(string) {
-    return string.substring(0, 30) + (string.length > 30 ? '...' : '');
-  };
+  let renderedComponent;
 
-  let responseComponent;
-  let {response} = state;
-
-  switch(response.type) {
-    case 'rematchStarted': {
-      responseComponent = <div className={Styles.popUpOne}>Game has restarted.</div>
+  switch(component) {
+    case 'CHAT':
+      renderedComponent = <Chat 
+                            state={state}
+                            setComponent={setComponent}
+                            sendMessage={sendMessage}
+                          />
       break;
-    }
-    case 'rematch': 
-      responseComponent = <div className={Styles.popUpOne}>{response.username} wants to rematch.</div>
+    case 'GAME':
+      renderedComponent = <OnlineGame 
+                            state={state} 
+                            dispatch={dispatch} 
+                            sendMessage={sendMessage} 
+                            startChatMode={startChatMode} 
+                            openOptions={openOptions}
+                          />
       break;
-    case 'userJoined':
-      responseComponent = <div className={Styles.popUpOne}>{response.userThatJoined} has joined.</div>
-      break;
-    case 'userLeft':
-      responseComponent = <div className={Styles.popUpOne}>{response.username} has left.</div>
-      break;
-    case 'latestMessage':
-      responseComponent = <div className={Styles.popUpTwo} onClick={startChatMode}>
-        <div className={Styles.popUpName}>{response.username[0]}</div>
-        <div className={Styles.popUpMessage}>{reduceString(response.message)}</div>
-      </div>
-      break;
-    case 'playerDisconnect': 
-    responseComponent = <div className={Styles.popUpOne}>{response.playerName} has been disconnected.</div>
+    case 'OPTIONS':
+      renderedComponent = <Options
+                            state={state}
+                            sendMessage={sendMessage}
+                            openGame={openGame}
+                          />
       break;
   };
 
-  const condition = state.topBarResponse.type === 'ERROR' || state.topBarResponse.type === 'MESSAGE';
-
-  return (
-    <div>
-      {chatMode ?
-        <Chat state={state} setChatMode={setChatMode} sendMessage={sendMessage}/>
-        :
-        <div>
-          <TopBarResponse state={state} dispatch={dispatch} />
-          <div className={Styles.container} style={condition ? {borderTopLeftRadius: '0px', borderTopRightRadius: '0px'} : {borderTopLeftRadius: '5px', borderTopRightRadius: '5px'}}>
-            <div className={Styles.version}>v1.0.0</div>
-            <div className={Styles.subContainer}>
-              <h1 className={Styles.heading}>Tic-Tac-Chat</h1>
-              <div className={Styles.boardContainer}>
-                <div className={Styles.gameId}>Game ID: {state.gameId}</div>
-                <div className={Styles.roomName}>{state.roomName}</div>
-                {responseComponent}
-                <Board state={state} dispatch={dispatch} sendMessage={sendMessage}/>
-                <div
-                  className={Styles.chatButton}
-                  onClick={startChatMode}
-                  >
-                  {!state.gameFull ? 'You can chat once other player joins.' : 'Say hi..'}
-                </div>
-                <div className={Styles.bottomContainer}>
-                  <div onClick={leave} className={Styles.leave}>Leave game</div>
-                  {state.gameOver && !state.rematch &&
-                    <div
-                      onClick={rematch}
-                      className={Styles.rematch}
-                      >
-                      Rematch
-                    </div>
-                  }
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      }
-    </div>
-  );
+  return renderedComponent;
 };

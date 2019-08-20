@@ -8,9 +8,12 @@ export default function useWebSocket(state, dispatch, socketUrl) {
 
   useEffect(() => {
     if (reconnect === null || reconnect === true) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const clientID = urlParams.get('clientID');
       let url = socketUrl;
-      if (state.clientID) {
-        url += `?clientID=${state.clientID}`;
+      if (state.clientID || clientID) {
+        const urlClientID = state.clientID ? state.clientID : clientID;
+        url += `?clientID=${urlClientID}`;
       };
       let s = new WebSocket(url);
       setSocket(s);
@@ -29,9 +32,7 @@ export default function useWebSocket(state, dispatch, socketUrl) {
         window.removeEventListener('beforeunload', unMount);
         window.removeEventListener('pagehide', unMount);
       };
-      if (reconnect === true) {
-       socket.addEventListener('open', openSocket);
-      };
+      socket.addEventListener('open', openSocket);
       socket.addEventListener('message', createSocketEvents);
       socket.addEventListener('close', closeSocket);
       socket.addEventListener('error', error);
@@ -43,26 +44,48 @@ export default function useWebSocket(state, dispatch, socketUrl) {
         unMount();
       };
     };
-  }, [socket])
+  }, [socket]);
 
   function openSocket() {
-    dispatch({
-      type: 'TOP_BAR_RESPONSE',
-      data: {
-        type: "MESSAGE",
-        message: 'Back online',
-      }
-    });
-    setReconnect(false);
-    clearTimeout(reconnectTimeOut);
+    const urlParams = new URLSearchParams(window.location.search);
+    const clientID = urlParams.get('clientID');
+    const username = urlParams.get('username');
+    const gameId = urlParams.get('gameId');
+    const token = urlParams.get('token');
+    if (clientID) {
+      const message = {
+        type: 'joinFromInvite',
+        name: localStorage.getItem('username'),
+        username: username,
+        gameId: gameId,
+        token: token,
+        clientID: clientID
+      };
+      socket.send(JSON.stringify(message))
+    };
+    if (reconnect) {
+      dispatch({
+        type: 'TOP_BAR_RESPONSE',
+        data: {
+          type: "MESSAGE",
+          message: 'Back online',
+        }
+      });
+      setReconnect(false);
+      clearTimeout(reconnectTimeOut);
+    };
   };
 
   function createSocketEvents(event) {
     const data = JSON.parse(event.data);
-    dispatch({
-      type: data.type,
-      data: data
-    });
+    if (data.type === 'redirectError') {
+      window.location.replace(data.url);
+    } else {
+      dispatch({
+        type: data.type,
+        data: data
+      });
+    };
   };
 
   function closeSocket() {

@@ -45,7 +45,7 @@ export default function Menu({state, dispatch, findGames}) {
   return (
     <div className={Styles.mainContainer}>
       <TopBarResponse state={state} dispatch={dispatch} findGames={findGames} />
-      <div className={Styles.version}>v1.0.0</div>
+      <div className={Styles.version}>v1.1.1</div>
       <h1 className={Styles.heading}>Tic-Tac-Chat</h1>
       {!state.multiplayer &&
         <div className={Styles.subContainer}>

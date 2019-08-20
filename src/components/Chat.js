@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { ConfigContext } from './Game';
 import Styles from 'styles/Chat.css';
 
-export default function Chat({state, setChatMode, sendMessage}) {
+export default function Chat({state, setComponent, sendMessage}) {
 
   const [message, setMessage] = useState('');
   const [paddingBottom, setPaddingBottom] = useState('10px');
@@ -21,7 +21,7 @@ export default function Chat({state, setChatMode, sendMessage}) {
   }, [state.chat]);
 
   function stopChatMode() {
-    setChatMode(false);
+    setComponent('GAME');
   };
 
   function closeKeyboard() {
@@ -49,7 +49,7 @@ export default function Chat({state, setChatMode, sendMessage}) {
       sendMessageMethod();
     };
     if (e.key === 'Escape') {
-      setChatMode(false);
+      setComponent('GAME');
     };
   };
 
@@ -85,9 +85,8 @@ export default function Chat({state, setChatMode, sendMessage}) {
   return (
     <div className={!isMobile ? Styles.chatContainer : Styles.chatContainerMobile}>
       <div className={!isMobile ? Styles.playerNameContainer : Styles.playerNameContainerMobile}>
-        <div className={[Styles.closeButtonTop, Styles.grow].join(' ')} onClick={stopChatMode}>Close</div>
-        <div className={[Styles.playerName, Styles.grow].join(' ')}>{state.otherUser.length > 0 && reduceString(state.otherUser[0].username.split(' ')[0])}</div>
-        <div className={Styles.grow}/>
+        <div className={Styles.closeButtonTop} onClick={stopChatMode}>Close</div>
+        <div className={Styles.playerName}>{state.otherUser.length > 0 && reduceString(state.otherUser[0].username.split(' ')[0])}</div>
       </div>
       <div className={!isMobile ? Styles.anotherContainer : Styles.anotherContainerMobile} style={{paddingBottom: paddingBottom}}>
         <div className={Styles.subContainer}>
